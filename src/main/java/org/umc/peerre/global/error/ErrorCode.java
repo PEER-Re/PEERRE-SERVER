@@ -36,6 +36,7 @@ public enum ErrorCode {
      */
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "엔티티를 찾을 수 없습니다."),
     TEAM_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 팀입니다."),
+    PROJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 프로젝트입니다."),
 
     /**
      * 405 Method Not Allowed
