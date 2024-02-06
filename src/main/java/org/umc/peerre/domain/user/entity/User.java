@@ -24,14 +24,14 @@ public class User extends BaseTimeEntity {
     @Id
     private Long id;
 
-    @Column
-    private String social_id;
+    @Column(name="social_id")
+    private String socialId;
 
     @Column
     private String nickname;
 
     @Column
-    private String profileimg_url;
+    private String profileImg_url;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<FeedbackRegistration> feedbackRegistrationList = new ArrayList<>();
