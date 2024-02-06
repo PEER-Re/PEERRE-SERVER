@@ -24,6 +24,7 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN_VALUE(HttpStatus.UNAUTHORIZED, "리프레시 토큰의 값이 올바르지 않습니다."),
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다. 다시 로그인해 주세요."),
     NOT_MATCH_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "일치하지 않는 리프레시 토큰입니다."),
+    PROJECT_ALREADY_IN_PROGRESS(HttpStatus.BAD_REQUEST, "이미 진행 중인 프로젝트가 존재합니다."),
 
     /**
      * 403 Forbidden
@@ -34,6 +35,7 @@ public enum ErrorCode {
      * 404 Not Found
      */
     ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "엔티티를 찾을 수 없습니다."),
+    TEAM_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 팀입니다."),
 
     /**
      * 405 Method Not Allowed
