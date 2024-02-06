@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.umc.peerre.domain.project.dto.request.CreateProjectRequestDto;
+import org.umc.peerre.domain.project.dto.response.CreateProjectResponseDto;
 import org.umc.peerre.domain.project.service.ProjectService;
 import org.umc.peerre.global.common.SuccessResponse;
-import org.umc.peerre.global.config.auth.UserId;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/project")
@@ -17,9 +17,10 @@ import org.umc.peerre.global.config.auth.UserId;
 public class ProjectController {
 
     private final ProjectService projectService;
+
     @PostMapping
     public ResponseEntity<SuccessResponse<?>> createProject(@RequestBody CreateProjectRequestDto createProjectRequestDto) {
-        final CreateProjectRequestDto newProject = projectService.createProject(createProjectRequestDto);
+        final CreateProjectResponseDto newProject = projectService.createProject(createProjectRequestDto);
         return SuccessResponse.created(newProject);
     }
 }

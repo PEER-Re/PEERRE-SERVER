@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.umc.peerre.domain.project.dto.request.CreateProjectRequestDto;
 import org.umc.peerre.domain.project.constant.Status;
+import org.umc.peerre.domain.project.dto.response.CreateProjectResponseDto;
 import org.umc.peerre.domain.project.entity.Project;
 import org.umc.peerre.domain.project.repository.ProjectRepository;
 import org.umc.peerre.domain.teamspace.entity.Teamspace;
@@ -25,7 +26,7 @@ public class ProjectService {
 
     private final TeamspaceRepository teamspaceRepository;
     private final ProjectRepository projectRepository;
-    public CreateProjectRequestDto createProject(CreateProjectRequestDto createProjectRequestDto) {
+    public CreateProjectResponseDto createProject(CreateProjectRequestDto createProjectRequestDto) {
         Long teamId = createProjectRequestDto.teamId();
         String title = createProjectRequestDto.title();
 
@@ -50,7 +51,7 @@ public class ProjectService {
 
         projectRepository.save(project);
 
-        return null;
+        return CreateProjectResponseDto.of(project);
     }
 
 
