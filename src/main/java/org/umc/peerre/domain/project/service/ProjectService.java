@@ -29,6 +29,7 @@ public class ProjectService {
         int size = teamspace.getSize();
 
         Project project = Project.builder()
+                .teamspace(teamspace)
                 .title(title)
                 .status(Status.진행중)
                 .startDay(LocalDate.now())
