@@ -36,6 +36,6 @@ public class Teamspace extends BaseTimeEntity {
     @OneToMany(mappedBy = "teamspace", cascade = CascadeType.ALL)
     private List<UserTeamspace> userTeamspaceList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "teamSpace", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "teamspace", cascade = CascadeType.ALL)
     private List<Project> projectList = new ArrayList<>();
 }
