@@ -128,9 +128,11 @@ public class FeedbackService {
 
             List<Feedback> feedbackList = feedbackRegistration.getFeedbackList();
 
-            feedbackList.stream()
+            feedbackList
                     .forEach(feedback -> {
-                        if((feedback.getFeedback_content().equals("연락이 잘 돼요") || feedback.getFeedback_content().equals("연락이 안 돼요")) && request.getCommunication()) {
+                        if((feedback.getFeedback_content().equals("연락이 잘 돼요") || feedback.getFeedback_content().equals("연락이 안 돼요")) && request.getCommunication()==null) {
+                            feedback.setFeedback_type(null);
+                        } else if((feedback.getFeedback_content().equals("연락이 잘 돼요") || feedback.getFeedback_content().equals("연락이 안 돼요")) && request.getCommunication()) {
                             feedback.setFeedback_content("연락이 잘 돼요");
                             feedback.setFeedback_type(true);
                         } else if((feedback.getFeedback_content().equals("연락이 잘 돼요") || feedback.getFeedback_content().equals("연락이 안 돼요")) && request.getCommunication()==false) {
@@ -138,7 +140,9 @@ public class FeedbackService {
                             feedback.setFeedback_type(false);
                         }
 
-                        if((feedback.getFeedback_content().equals("시간약속을 잘 지켜요") || feedback.getFeedback_content().equals("시간약속을 잘 안지켜요")) && request.getPunctual()) {
+                        if ((feedback.getFeedback_content().equals("시간약속을 잘 지켜요") || feedback.getFeedback_content().equals("시간약속을 잘 안지켜요")) && request.getPunctual()==null) {
+                            feedback.setFeedback_type(null);
+                        } else if((feedback.getFeedback_content().equals("시간약속을 잘 지켜요") || feedback.getFeedback_content().equals("시간약속을 잘 안지켜요")) && request.getPunctual()) {
                             feedback.setFeedback_content("시간약속을 잘 지켜요");
                             feedback.setFeedback_type(true);
                         } else if((feedback.getFeedback_content().equals("시간약속을 잘 지켜요") || feedback.getFeedback_content().equals("시간약속을 잘 안지켜요")) && request.getPunctual()==false) {
@@ -146,7 +150,9 @@ public class FeedbackService {
                             feedback.setFeedback_type(false);
                         }
 
-                        if((feedback.getFeedback_content().equals("능력이 뛰어나요") || feedback.getFeedback_content().equals("능력이 뒤떨어져요")) && request.getCompetent()) {
+                        if ((feedback.getFeedback_content().equals("능력이 뛰어나요") || feedback.getFeedback_content().equals("능력이 뒤떨어져요")) && request.getCompetent()==null) {
+                            feedback.setFeedback_type(null);
+                        } else if((feedback.getFeedback_content().equals("능력이 뛰어나요") || feedback.getFeedback_content().equals("능력이 뒤떨어져요")) && request.getCompetent()) {
                             feedback.setFeedback_content("능력이 뛰어나요");
                             feedback.setFeedback_type(true);
                         } else if((feedback.getFeedback_content().equals("능력이 뛰어나요") || feedback.getFeedback_content().equals("능력이 뒤떨어져요")) && request.getCompetent()==false)  {
@@ -154,7 +160,9 @@ public class FeedbackService {
                             feedback.setFeedback_type(false);
                         }
 
-                        if((feedback.getFeedback_content().equals("말을 조리있게 잘해요") || feedback.getFeedback_content().equals("말을 조리있게 못해요")) && request.getArticulate()) {
+                        if((feedback.getFeedback_content().equals("말을 조리있게 잘해요")|| feedback.getFeedback_content().equals("말을 조리있게 못해요")) && request.getArticulate()==null) {
+                            feedback.setFeedback_type(null);
+                        } else if((feedback.getFeedback_content().equals("말을 조리있게 잘해요") || feedback.getFeedback_content().equals("말을 조리있게 못해요")) && request.getArticulate()) {
                             feedback.setFeedback_content("말을 조리있게 잘해요");
                             feedback.setFeedback_type(true);
                         } else if((feedback.getFeedback_content().equals("말을 조리있게 잘해요")|| feedback.getFeedback_content().equals("말을 조리있게 못해요")) && request.getArticulate()==false){
@@ -162,7 +170,9 @@ public class FeedbackService {
                             feedback.setFeedback_type(false);
                         }
 
-                        if((feedback.getFeedback_content().equals("빈틈이 없어요") || feedback.getFeedback_content().equals("빈틈이 있어요")) && request.getThorough()) {
+                        if((feedback.getFeedback_content().equals("빈틈이 없어요") || feedback.getFeedback_content().equals("빈틈이 있어요")) && request.getThorough()==null) {
+                            feedback.setFeedback_type(null);
+                        } else if((feedback.getFeedback_content().equals("빈틈이 없어요") || feedback.getFeedback_content().equals("빈틈이 있어요")) && request.getThorough()) {
                             feedback.setFeedback_content("빈틈이 없어요");
                             feedback.setFeedback_type(true);
                         } else if((feedback.getFeedback_content().equals("빈틈이 없어요") || feedback.getFeedback_content().equals("빈틈이 있어요")) && request.getThorough()==false) {
@@ -170,7 +180,9 @@ public class FeedbackService {
                             feedback.setFeedback_type(false);
                         }
 
-                        if((feedback.getFeedback_content().equals("재미있어요") || feedback.getFeedback_content().equals("재미없어요")) && request.getEngaging()) {
+                        if((feedback.getFeedback_content().equals("재미있어요") ||feedback.getFeedback_content().equals("재미없어요")) && request.getEngaging()==null) {
+                            feedback.setFeedback_type(null);
+                        } else if((feedback.getFeedback_content().equals("재미있어요") || feedback.getFeedback_content().equals("재미없어요")) && request.getEngaging()) {
                             feedback.setFeedback_content("재미있어요");
                             feedback.setFeedback_type(true);
                         }  else if((feedback.getFeedback_content().equals("재미있어요") ||feedback.getFeedback_content().equals("재미없어요")) && request.getEngaging()==false)  {
