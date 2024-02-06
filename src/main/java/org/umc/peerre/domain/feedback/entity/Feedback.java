@@ -1,17 +1,29 @@
 package org.umc.peerre.domain.feedback.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.umc.peerre.global.common.BaseTimeEntity;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "feedback")
-@Entity
-public class Feedback {
-    @Id
+@Setter
+@Builder
+@NoArgsConstructor(access= AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Entity(name="Feedback")
+@Table(name="feedback")
+public class Feedback  extends BaseTimeEntity {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "feedback_id")
+    @Id
     private Long id;
+
+    @Column
+    private String feedback_content;
+
+    @Column
+    private Boolean feedback_type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="feedbackregistration_id", referencedColumnName = "id")
+    private FeedbackRegistration feedbackRegistration;
 }
