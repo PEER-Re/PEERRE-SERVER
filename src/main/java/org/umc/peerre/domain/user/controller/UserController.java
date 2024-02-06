@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.umc.peerre.domain.user.dto.response.UserTokenResponseDto;
-import org.umc.peerre.domain.user.service.UserService;
 import org.umc.peerre.global.common.SuccessResponse;
 
 @RequiredArgsConstructor
