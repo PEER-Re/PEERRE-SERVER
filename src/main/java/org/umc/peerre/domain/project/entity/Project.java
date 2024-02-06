@@ -5,10 +5,11 @@ import lombok.*;
 import org.umc.peerre.domain.feedback.entity.Comment;
 import org.umc.peerre.domain.feedback.entity.FeedbackAggregation;
 import org.umc.peerre.domain.feedback.entity.FeedbackRegistration;
+import org.umc.peerre.domain.project.constant.Status;
 import org.umc.peerre.domain.teamspace.entity.Teamspace;
 import org.umc.peerre.global.common.BaseTimeEntity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,14 +32,15 @@ public class Project extends BaseTimeEntity {
     @Column
     private Integer size;
 
+    @Enumerated(EnumType.STRING)
     @Column
-    private Boolean status;
+    private Status status;
 
-    @Column
-    private LocalDateTime start_day;
+    @Column(name="start_day")
+    private LocalDate startDay;
 
-    @Column
-    private LocalDateTime end_day;
+    @Column(name="end_day")
+    private LocalDate endDay;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="team_id", referencedColumnName = "id")
@@ -52,4 +54,7 @@ public class Project extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Comment> commentList = new ArrayList<>();
+
+
+
 }
