@@ -2,10 +2,7 @@ package org.umc.peerre.domain.project.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.umc.peerre.domain.project.dto.request.CreateProjectRequestDto;
 import org.umc.peerre.domain.project.dto.response.CreateProjectResponseDto;
 import org.umc.peerre.domain.project.service.ProjectService;
@@ -22,5 +19,11 @@ public class ProjectController {
     public ResponseEntity<SuccessResponse<?>> createProject(@RequestBody CreateProjectRequestDto createProjectRequestDto) {
         final CreateProjectResponseDto newProject = projectService.createProject(createProjectRequestDto);
         return SuccessResponse.created(newProject);
+    }
+
+    @PostMapping("/{projectId}")
+    public ResponseEntity<SuccessResponse<?>> closeProject(@PathVariable Long projectId) {
+        projectService.closeProject(projectId);
+        return SuccessResponse.ok(null);
     }
 }

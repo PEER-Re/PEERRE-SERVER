@@ -54,5 +54,10 @@ public class ProjectService {
         return CreateProjectResponseDto.of(project);
     }
 
-
+    public void closeProject(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
+        project.setStatus(Status.종료);
+        project.setEndDay(LocalDate.now());
+    }
 }
