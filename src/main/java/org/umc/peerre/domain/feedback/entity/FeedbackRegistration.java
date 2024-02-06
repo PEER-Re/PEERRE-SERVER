@@ -25,8 +25,8 @@ public class FeedbackRegistration extends BaseTimeEntity {
     @Id
     private Long id;
 
-    @Column
-    private Long recipient_id;
+    @Column(name="recipient_id")
+    private Long recipientId;
 
     @CreatedDate
     private LocalDateTime createdAt;
