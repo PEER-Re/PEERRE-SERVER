@@ -3,6 +3,9 @@ package org.umc.peerre.global.config.auth.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -40,21 +43,18 @@ public class JwtProvider {
 
     public void validateAccessToken(String accessToken) {
         try {
-            JWT.require(Algorithm.HMAC512(SECRET))
-                    .build()
-                    .verify(accessToken);
-        } catch (SecurityException | MalformedJwtException e) {
-            throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN_VALUE);
-        } catch (ExpiredJwtException e) {
-            throw new UnauthorizedException(ErrorCode.EXPIRED_ACCESS_TOKEN);
-        } catch (UnsupportedJwtException e) {
-            throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN_VALUE);
-        } catch (IllegalArgumentException e) {
-            throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN_VALUE);
-        } catch (JWTDecodeException e) {
-            throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN_VALUE);
+            JWT.require(Algorithm.HMAC512(SECRET)).build().verify(accessToken);
+        } catch (JWTVerificationException e) {
+            ErrorCode errorCode;
+            if (e instanceof TokenExpiredException) {
+                errorCode = ErrorCode.EXPIRED_ACCESS_TOKEN;
+            } else {
+                errorCode = ErrorCode.INVALID_ACCESS_TOKEN_VALUE;
+            }
+            throw new UnauthorizedException(errorCode);
         }
     }
+
 
     public String extractSocialId(String token) {
         return JWT.require(Algorithm.HMAC512(SECRET)).build()
