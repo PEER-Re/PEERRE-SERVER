@@ -31,7 +31,7 @@ public class User extends BaseTimeEntity {
     private String nickname;
 
     @Column
-    private String profileImg_url;
+    private String profileImgUrl;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<FeedbackRegistration> feedbackRegistrationList = new ArrayList<>();
@@ -45,4 +45,8 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserTeamspace> userTeamspaceList = new ArrayList<>();
 
+    public void updateUserInfo(String nickname, String profileImageUrl) {
+        this.nickname = nickname;
+        this.profileImgUrl = profileImageUrl;
+    }
 }
