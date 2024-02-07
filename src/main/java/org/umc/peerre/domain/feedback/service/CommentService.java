@@ -7,10 +7,10 @@ import org.umc.peerre.domain.feedback.dto.response.CreateCommentResponseDto;
 import org.umc.peerre.domain.feedback.entity.Comment;
 import org.umc.peerre.domain.feedback.repository.CommentRepository;
 import org.umc.peerre.domain.project.repository.ProjectRepository;
-import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.domain.user.repository.UserRepository;
 import org.umc.peerre.global.error.ErrorCode;
 import org.umc.peerre.global.error.exception.EntityNotFoundException;
+
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +31,7 @@ public class CommentService {
                 .user(userRepository.findById(userId)
                         .orElseThrow(()
                         -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND))).build();
+
         Comment save = commentRepository.save(comment);
         return CreateCommentResponseDto.of(save);
     }
