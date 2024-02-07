@@ -12,6 +12,8 @@ public enum ErrorCode {
      * 400 Bad Request
      */
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    PROJECT_ALREADY_IN_PROGRESS(HttpStatus.BAD_REQUEST, "이미 진행 중인 프로젝트가 존재합니다."),
+    NOT_LASTEST_PROJECT(HttpStatus.BAD_REQUEST, "최신 프로젝트가 아닙니다."),
 
     /**
      * 401 Unauthorized
@@ -24,7 +26,6 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN_VALUE(HttpStatus.UNAUTHORIZED, "리프레시 토큰의 값이 올바르지 않습니다."),
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다. 다시 로그인해 주세요."),
     NOT_MATCH_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "일치하지 않는 리프레시 토큰입니다."),
-    PROJECT_ALREADY_IN_PROGRESS(HttpStatus.BAD_REQUEST, "이미 진행 중인 프로젝트가 존재합니다."),
 
     /**
      * 403 Forbidden
