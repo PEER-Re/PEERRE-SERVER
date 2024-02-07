@@ -31,7 +31,7 @@ public class User extends BaseTimeEntity {
     private String nickname;
 
     @Column
-    private String profileImg_url;
+    private String profileImgUrl;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<FeedbackRegistration> feedbackRegistrationList = new ArrayList<>();

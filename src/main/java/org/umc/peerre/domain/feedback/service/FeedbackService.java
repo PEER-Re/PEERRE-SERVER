@@ -26,10 +26,7 @@ import org.umc.peerre.domain.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -227,7 +224,7 @@ public class FeedbackService {
 
         FeedbackResponse.UserInfo userInfo = FeedbackResponse.UserInfo.builder()
                 .nickname(user.getNickname())
-                .profileImageUrl(user.getProfileImg_url())
+                .profileImageUrl(user.getProfileImgUrl())
                 .projectName(project.getTitle())
                 .teamName(teamspace.getName())
                 .teamProfile(teamspace.getProfile())
