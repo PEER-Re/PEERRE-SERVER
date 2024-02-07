@@ -68,7 +68,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void setAuthentication(String socialId) {
         User user = userRepository.findBySocialId(socialId)
                 .orElseThrow(()-> new UnauthorizedException(MEMBER_NOT_FOUND));
-        log.info("이메일로 유저 찾아오기");
 
         // user를 세션에 저장하기 위해 authentication 객체를 생성한다.
         PrincipalDetails principalDetails = new PrincipalDetails(user);

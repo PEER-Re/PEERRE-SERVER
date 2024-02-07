@@ -2,13 +2,12 @@ package org.umc.peerre.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.umc.peerre.domain.user.dto.response.UserTokenResponseDto;
 import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.domain.user.service.UserService;
 import org.umc.peerre.global.common.SuccessResponse;
-import org.umc.peerre.global.config.auth.principal.PrincipalDetails;
+import org.umc.peerre.global.config.auth.UserId;
+
 
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
@@ -18,14 +17,13 @@ public class UserController {
     private final UserService userService;
 
     /**
-     * 발급된 토큰 검증 테스트
-     * @param principal 시큐리티를 통해 유저 정보를 받아옵니다
+     * 발급된 토큰 검증 테스트 api
+     * @param userId 토큰으로부터 추출해온 User 정보로 꺼내온 User 객체의 아이디
      * @return
      */
     @GetMapping("/test")
-    public ResponseEntity<SuccessResponse<?>> test(@AuthenticationPrincipal PrincipalDetails principal) {
-        User user = principal.getUser();
-        return SuccessResponse.ok("닉네임 = " + user.getNickname() + ", 소셜아이디 = " + user.getSocialId());
+    public ResponseEntity<SuccessResponse<?>> test(@UserId Long userId) {
+        return SuccessResponse.ok("유저 아이디 = "+userId);
     }
 }
 
