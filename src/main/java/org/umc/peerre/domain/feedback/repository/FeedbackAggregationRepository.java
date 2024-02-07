@@ -6,4 +6,5 @@ import org.umc.peerre.domain.feedback.entity.FeedbackAggregation;
 
 @Repository
 public interface FeedbackAggregationRepository extends JpaRepository<FeedbackAggregation,Long> {
+    Integer countByProjectIdAndUserIdAndEvaluationStatus(Long userId, Long projectId, Boolean evaluationStatus);
 }

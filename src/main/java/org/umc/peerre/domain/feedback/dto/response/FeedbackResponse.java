@@ -6,6 +6,7 @@ import org.umc.peerre.domain.feedback.dto.request.FeedbackRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class FeedbackResponse {
 
@@ -83,4 +84,36 @@ public class FeedbackResponse {
         LocalDateTime lastModifiedDate;
     }
 
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TeamInfo {
+        private String teamName;
+        private String teamProfile;
+        private String projectName;
+        private Integer evaluationProgress;
+        private List<String> teamUserNames;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TeamFeedbackInfo {
+        private Integer yesFeedbackNum;
+        private Integer rank;
+        private Set<String> goodFeedbackContent;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TeamReportResponse {
+        private TeamInfo teamInfo;
+        private List<TeamFeedbackInfo> teamFeedbackInfoList;
+    }
 }

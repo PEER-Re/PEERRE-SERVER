@@ -24,9 +24,9 @@ import org.umc.peerre.domain.teamspace.repository.UserTeamspaceRepository;
 import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.domain.user.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -214,10 +214,11 @@ public class FeedbackService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(()->new EntityNotFoundException("해당하는 프로젝트가 없습니다."));
 
-        UserTeamspace userTeamspace = userTeamspaceRepository.findByUserId(userId)
-                .orElseThrow(()->new EntityNotFoundException("유저의 팀스페이스가 없습니다."));
+        if(project.getStatus()==Status.종료) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"진행중인 프로젝트가 아닙니다.");
+        }
 
-        Long teamId = userTeamspace.getTeamspace().getId();
+        Long teamId = project.getTeamspace().getId();
 
         Teamspace teamspace = teamspaceRepository.findById(teamId)
                 .orElseThrow(()->new EntityNotFoundException("해당하는 팀스페이스가 없습니다."));
@@ -313,6 +314,107 @@ public class FeedbackService {
                 .noFeedbackInfo(noFeedbackInfo)
                 .yesFeedbackInfo(yesFeedbackInfo)
                 .totalEvaluationNum(teamspace.getSize())
+                .build();
+    }
+
+    public FeedbackResponse.TeamReportResponse getTeamReport(Long userId, Long projectId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new EntityNotFoundException("해당하는 유저가 없습니다."));
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(()->new EntityNotFoundException("해당하는 프로젝트가 없습니다."));
+
+        if(project.getStatus()==Status.종료) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"진행중인 프로젝트가 아닙니다.");
+        }
+
+        Long teamId = project.getTeamspace().getId();
+
+        Teamspace teamspace = teamspaceRepository.findById(teamId)
+                .orElseThrow(()->new EntityNotFoundException("해당하는 팀스페이스가 없습니다."));
+
+        FeedbackResponse.TeamInfo teamInfo = FeedbackResponse.TeamInfo.builder()
+                .teamName(teamspace.getName())
+                .teamProfile(teamspace.getProfile())
+                .projectName(project.getTitle())
+                .build();
+
+        List<UserTeamspace> userTeamspaces = userTeamspaceRepository.findByTeamspace(teamspace)
+                .orElseThrow(()->new EntityNotFoundException("해당하는 팀에 속해있는 유저가 없습니다."));
+
+        List<String> teamUserNames = new ArrayList<>();
+        for (UserTeamspace userTeamspace : userTeamspaces) {
+            teamUserNames.add(userTeamspace.getUser().getNickname());
+        }
+        teamInfo.setTeamUserNames(teamUserNames);
+
+        List<Long> userIds = userTeamspaces.stream()
+                .map(userTeamspace -> userTeamspace.getUser().getId())
+                .toList();
+
+        List<Integer> evaluationStatusTrueCounts = new ArrayList<>();
+        for (Long id : userIds) {
+            Integer count = feedbackAggregationRepository.countByProjectIdAndUserIdAndEvaluationStatus(projectId, id, true);
+            evaluationStatusTrueCounts.add(count);
+        }
+
+        Integer totalEvaluationCount = evaluationStatusTrueCounts.stream()
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        if(teamspace.getSize()==null)
+        {
+            teamInfo.setEvaluationProgress(0);
+        } else {
+            Integer evaluationProgress = (int) Math.round((double) totalEvaluationCount / teamspace.getSize() * 100);
+            teamInfo.setEvaluationProgress(evaluationProgress);
+        }
+
+        Map<Long, FeedbackResponse.TeamFeedbackInfo> teamFeedbackInfoMap = new HashMap<>();
+        for (Long id : userIds) {
+
+            Long teamUserId = id;
+            // FeedbackRegistration 조회
+            List<FeedbackRegistration> feedbackRegistrations = feedbackRegistrationRepository.findByRecipientIdAndProject(teamUserId, project)
+                    .orElseThrow(() -> new EntityNotFoundException("해당하는 피드백 등록이 없습니다."));
+
+            for (FeedbackRegistration feedbackRegistration : feedbackRegistrations) {
+                Long recipientId = feedbackRegistration.getRecipientId();
+                FeedbackResponse.TeamFeedbackInfo teamFeedbackInfo = teamFeedbackInfoMap.getOrDefault(recipientId, FeedbackResponse.TeamFeedbackInfo.builder()
+                        .yesFeedbackNum(0)
+                        .goodFeedbackContent(new HashSet<>())
+                        .build());
+
+                // FeedbackList에서 yes 피드백 개수 계산
+                Integer yesFeedbackNum = (int) feedbackRegistration.getFeedbackList().stream()
+                        .filter(Feedback::getFeedbackType)
+                        .count();
+
+                teamFeedbackInfo.setYesFeedbackNum(teamFeedbackInfo.getYesFeedbackNum() + yesFeedbackNum);
+
+                // goodFeedbackContent 추가
+                Set<String> goodFeedbackContent = teamFeedbackInfo.getGoodFeedbackContent();
+                goodFeedbackContent.addAll(feedbackRegistration.getFeedbackList().stream()
+                        .filter(feedback -> feedback.getFeedbackType() && feedback.getFeedbackContent() != null)
+                        .map(Feedback::getFeedbackContent)
+                        .collect(Collectors.toSet()));
+                teamFeedbackInfo.setGoodFeedbackContent(goodFeedbackContent);
+
+                // Map에 저장
+                teamFeedbackInfoMap.put(recipientId, teamFeedbackInfo);
+            }
+        }
+
+        // rank 계산
+        List<FeedbackResponse.TeamFeedbackInfo> teamFeedbackInfoList = new ArrayList<>(teamFeedbackInfoMap.values());
+        teamFeedbackInfoList.sort(Comparator.comparingInt(FeedbackResponse.TeamFeedbackInfo::getYesFeedbackNum).reversed());
+        for (int i = 0; i < teamFeedbackInfoList.size(); i++) {
+            teamFeedbackInfoList.get(i).setRank(i + 1);
+        }
+        return FeedbackResponse.TeamReportResponse.builder()
+                .teamInfo(teamInfo)
+                .teamFeedbackInfoList(teamFeedbackInfoList)
                 .build();
     }
 }
