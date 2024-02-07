@@ -63,7 +63,7 @@ public class FeedbackController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "Error Code",description = "Error message",
                     content = @Content(schema = @Schema(implementation = ResponseEntity.class))),
     })
-    @GetMapping("/projects/{projectId}/users/{userId}/feedback")
+    @GetMapping("/projects/{projectId}/users/{userId}/myReport")
     public ResponseEntity<SuccessResponse<?>> enrollFeedback(@PathVariable("userId")Long userId,@PathVariable("projectId")Long projectId) {
 
         //Long userId=Long.parseLong(authentication.getName());
@@ -80,7 +80,7 @@ public class FeedbackController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "Error Code",description = "Error message",
                     content = @Content(schema = @Schema(implementation = ResponseEntity.class))),
     })
-    @PostMapping("/projects/{projectId}/feedback")
+    @PostMapping("/projects/{projectId}/myReport")
     public ResponseEntity<SuccessResponse<?>> enrollFeedback(Authentication authentication,@PathVariable("projectId")Long projectId) {
 
         Long userId=Long.parseLong(authentication.getName());
