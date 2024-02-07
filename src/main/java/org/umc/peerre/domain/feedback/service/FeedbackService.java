@@ -305,9 +305,9 @@ public class FeedbackService {
                         noFeedbackInfo.setBadCommunicationNum(noFeedbackInfo.getBadCommunicationNum() + 1);
                     }
 
-                    if (feedback.getFeedback_content().equals("빈틈이 있어요") && feedback.getFeedback_type()) {
+                    if (feedback.getFeedback_content().equals("빈틈이 없어요") && feedback.getFeedback_type()) {
                         yesFeedbackInfo.setGoodThoroughNum(yesFeedbackInfo.getGoodThoroughNum() + 1);
-                    } else if (feedback.getFeedback_content().equals("빈틈이 없어요") && !feedback.getFeedback_type()) {
+                    } else if (feedback.getFeedback_content().equals("빈틈이 있어요") && !feedback.getFeedback_type()) {
                         noFeedbackInfo.setBadThoroughNum(noFeedbackInfo.getBadThoroughNum() + 1);
                     }
                 }
