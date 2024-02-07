@@ -91,4 +91,19 @@ public class FeedbackController {
     }
     */
 
+    @Operation(summary = "팀 리포트 조회")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",description = "OK, 팀 리포트 조회"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "Error Code",description = "Error message",
+                    content = @Content(schema = @Schema(implementation = ResponseEntity.class))),
+    })
+    @GetMapping("/projects/{projectId}/users/{userId}/teamReport")
+    public ResponseEntity<SuccessResponse<?>> getTeamReport(@PathVariable("userId")Long userId,@PathVariable("projectId")Long projectId) {
+
+        //Long userId=Long.parseLong(authentication.getName());
+
+        FeedbackResponse.TeamReportResponse teamReportResponse = feedbackService.getTeamReport(userId,projectId);
+
+        return SuccessResponse.ok(teamReportResponse);
+    }
 }

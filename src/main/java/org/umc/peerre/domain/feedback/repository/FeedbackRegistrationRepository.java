@@ -14,4 +14,6 @@ public interface FeedbackRegistrationRepository extends JpaRepository<FeedbackRe
     boolean existsByRecipientIdAndUserAndProject(Long recipientId, User user, Project project);
     FeedbackRegistration findByRecipientIdAndUserAndProject(Long recipientId, User user, Project project);
     Optional<List<FeedbackRegistration>> findByRecipientIdAndProject(Long recipientId, Project project);
+    Optional<FeedbackRegistration> findByUser(User user);
+    Optional<List<FeedbackRegistration>> findByProject(Project project);
 }
