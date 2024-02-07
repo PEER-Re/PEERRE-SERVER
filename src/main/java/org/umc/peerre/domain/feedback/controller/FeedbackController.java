@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.umc.peerre.domain.feedback.dto.request.FeedbackRequest;
+import org.umc.peerre.domain.feedback.dto.response.FeedbackResponse;
 import org.umc.peerre.domain.feedback.service.FeedbackService;
 import org.umc.peerre.global.common.SuccessResponse;
 
@@ -34,9 +35,9 @@ public class FeedbackController {
 
         return SuccessResponse.ok(response);
     }
-/**
- * 로그인 완성되면 주석친 메서드로 변경 예정
- *
+    /**
+     * 로그인 완성되면 주석친 메서드로 변경 예정
+     *
     @Operation(summary = "피드백 등록(수정)")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",description = "OK, 피드백 등록(수정) 성공"),
@@ -54,5 +55,40 @@ public class FeedbackController {
         return SuccessResponse.ok(response);
     }
 
- */
+    */
+
+    @Operation(summary = "개인 리포트 조회")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",description = "OK, 개인 리포트 조회"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "Error Code",description = "Error message",
+                    content = @Content(schema = @Schema(implementation = ResponseEntity.class))),
+    })
+    @GetMapping("/projects/{projectId}/users/{userId}/myReport")
+    public ResponseEntity<SuccessResponse<?>> enrollFeedback(@PathVariable("userId")Long userId,@PathVariable("projectId")Long projectId) {
+
+        //Long userId=Long.parseLong(authentication.getName());
+
+        FeedbackResponse.myReportResponse myReportResponse = feedbackService.getMyReport(userId,projectId);
+
+        return SuccessResponse.ok(myReportResponse);
+    }
+    /**
+     * 로그인 완성되면 주석친 메서드로 변경 예정
+    @Operation(summary = "개인 리포트 조회")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",description = "OK, 개인 리포트 조회"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "Error Code",description = "Error message",
+                    content = @Content(schema = @Schema(implementation = ResponseEntity.class))),
+    })
+    @PostMapping("/projects/{projectId}/myReport")
+    public ResponseEntity<SuccessResponse<?>> enrollFeedback(Authentication authentication,@PathVariable("projectId")Long projectId) {
+
+        Long userId=Long.parseLong(authentication.getName());
+
+        FeedbackResponse.myReportResponse myReportResponse = feedbackService.getMyReport(userId,projectId);
+
+        return SuccessResponse.ok(myReportResponse);
+    }
+    */
+
 }
