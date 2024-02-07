@@ -409,9 +409,22 @@ public class FeedbackService {
         // rank 계산
         List<FeedbackResponse.TeamFeedbackInfo> teamFeedbackInfoList = new ArrayList<>(teamFeedbackInfoMap.values());
         teamFeedbackInfoList.sort(Comparator.comparingInt(FeedbackResponse.TeamFeedbackInfo::getYesFeedbackNum).reversed());
-        for (int i = 0; i < teamFeedbackInfoList.size(); i++) {
-            teamFeedbackInfoList.get(i).setRank(i + 1);
+
+        int rank = 1;
+        int prevYesFeedbackNum = -1;
+        int sameRankCount = 0;
+        for (FeedbackResponse.TeamFeedbackInfo teamFeedbackInfo : teamFeedbackInfoList) {
+            int currentYesFeedbackNum = teamFeedbackInfo.getYesFeedbackNum();
+            if (currentYesFeedbackNum < prevYesFeedbackNum) {
+                rank += sameRankCount;
+                sameRankCount = 1;
+            } else {
+                sameRankCount++;
+            }
+            teamFeedbackInfo.setRank(rank);
+            prevYesFeedbackNum = currentYesFeedbackNum;
         }
+
         return FeedbackResponse.TeamReportResponse.builder()
                 .teamInfo(teamInfo)
                 .teamFeedbackInfoList(teamFeedbackInfoList)
