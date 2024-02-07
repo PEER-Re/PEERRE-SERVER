@@ -230,7 +230,7 @@ public class FeedbackService {
 
         FeedbackResponse.UserInfo userInfo = FeedbackResponse.UserInfo.builder()
                 .nickname(user.getNickname())
-                .profileImageUrl(user.getProfileImg_url())
+                .profileImageUrl(user.getProfileImgUrl())
                 .projectName(project.getTitle())
                 .teamName(teamspace.getName())
                 .teamProfile(teamspace.getProfile())
