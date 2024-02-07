@@ -12,7 +12,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.umc.peerre.domain.user.repository.UserRepository;
 import org.umc.peerre.global.config.CorsConfig;
+import org.umc.peerre.global.config.auth.handelr.OAuthAuthenticationSuccessHandler;
 import org.umc.peerre.global.config.auth.jwt.JwtAuthenticationEntryPoint;
+import org.umc.peerre.global.config.auth.jwt.JwtAuthenticationFilter;
 import org.umc.peerre.global.config.auth.jwt.JwtProvider;
 import org.umc.peerre.global.config.auth.principal.PrincipalOAuth2UserService;
 
