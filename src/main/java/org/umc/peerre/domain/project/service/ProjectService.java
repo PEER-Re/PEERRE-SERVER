@@ -3,9 +3,11 @@ package org.umc.peerre.domain.project.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.umc.peerre.domain.feedback.entity.FeedbackAggregation;
+import org.umc.peerre.domain.feedback.entity.FeedbackRegistration;
 import org.umc.peerre.domain.project.dto.request.CreateProjectRequestDto;
 import org.umc.peerre.domain.project.constant.Status;
-import org.umc.peerre.domain.project.dto.response.CreateProjectResponseDto;
+import org.umc.peerre.domain.project.dto.response.*;
 import org.umc.peerre.domain.project.entity.Project;
 import org.umc.peerre.domain.project.repository.ProjectRepository;
 import org.umc.peerre.domain.teamspace.entity.Teamspace;
@@ -15,9 +17,13 @@ import org.umc.peerre.global.error.exception.EntityNotFoundException;
 import org.umc.peerre.global.error.exception.InvalidValueException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static org.umc.peerre.global.error.ErrorCode.TEAM_NOT_FOUND;
+import static org.umc.peerre.global.error.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -34,7 +40,7 @@ public class ProjectService {
                 -> new EntityNotFoundException(TEAM_NOT_FOUND));
 
         if (projectRepository.findByTeamspaceAndStatus(teamspace, Status.진행중).isPresent()) {
-            throw new InvalidValueException(ErrorCode.PROJECT_ALREADY_IN_PROGRESS);
+            throw new InvalidValueException(PROJECT_ALREADY_IN_PROGRESS);
         }
 
 
@@ -60,4 +66,95 @@ public class ProjectService {
         project.setStatus(Status.종료);
         project.setEndDay(LocalDate.now());
     }
+
+    public void reopenProject(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
+
+        Long teamId = project.getTeamspace().getId();
+        if (projectRepository.findByTeamspaceIdAndStatus(teamId,Status.진행중).isPresent()) {
+            throw new InvalidValueException(PROJECT_ALREADY_IN_PROGRESS);
+        }
+
+        Optional<Project> latestProject = projectRepository.findFirstByTeamspaceIdAndStatusOrderByEndDayDesc(teamId, Status.종료);
+        System.out.println(latestProject.get().getId());
+        if (latestProject.isEmpty() || !latestProject.get().getId().equals(projectId)) {
+            throw new InvalidValueException(NOT_LASTEST_PROJECT);
+        }
+
+        project.setStatus(Status.진행중);
+        project.setEndDay(null);
+    }
+
+    public TeamInfoResponseDto getTeamInfo(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
+
+        List<FeedbackAggregation> feedbackAggregationList = project.getFeedbackAggregationList();
+        List<FeedbackRegistration> feedbackRegistrationList = project.getFeedbackRegistrationList();
+
+        double totalParticipateRate = calculateTotalParticipateRate(feedbackAggregationList);
+
+        int totalYesFeedbackCount = calculateTotalFeedbackCount(feedbackRegistrationList, true);
+        int totalNoFeedbackCount = calculateTotalFeedbackCount(feedbackRegistrationList, false);
+
+        return new TeamInfoResponseDto(
+                project.getTeamspace().getName(),
+                project.getStartDay(),
+                project.getEndDay(),
+                project.getSize(),
+                totalParticipateRate * 100.0,
+                totalYesFeedbackCount,
+                totalNoFeedbackCount
+        );
+    }
+
+    private double calculateTotalParticipateRate(List<FeedbackAggregation> feedbackAggregationList) {
+        long totalFeedbackCount = feedbackAggregationList.size();
+        long evaluatedFeedbackCount = feedbackAggregationList.stream()
+                .filter(feedbackAggregation -> feedbackAggregation.getEvaluationStatus())
+                .count();
+
+        return totalFeedbackCount > 0 ? (double) evaluatedFeedbackCount / totalFeedbackCount : 0.0;
+    }
+
+    private int calculateTotalFeedbackCount(List<FeedbackRegistration> feedbackRegistrationList, boolean isYes) {
+        return (int) feedbackRegistrationList.stream()
+                .flatMap(feedbackRegistration -> feedbackRegistration.getFeedbackList().stream())
+                .filter(feedback -> isYes == feedback.getFeedbackType())
+                .count();
+    }
+
+
+    public MyFeedbackResponseDto getMyFeedback(Long userId, Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
+
+        List<FeedbackRegistration> feedbackRegistrations = project.getFeedbackRegistrationList().stream()
+                .filter(registration -> registration.getRecipientId().equals(userId))
+                .collect(Collectors.toList());
+
+        if (feedbackRegistrations.isEmpty()) {
+            throw new EntityNotFoundException(FEEDBACK_REGISTRATION_NOT_FOUND);
+        }
+
+        List<MyYesFeedbackResponseDto> yesFeedbackList = feedbackRegistrations.stream()
+                .flatMap(registration -> registration.getFeedbackList().stream()
+                        .filter(feedback -> Boolean.TRUE.equals(feedback.getFeedbackType()))
+                        .map(feedback -> new MyYesFeedbackResponseDto(feedback.getFeedbackContent()))
+                )
+                .collect(Collectors.toList());
+
+        List<MyNoFeedbackResponseDto> noFeedbackList = feedbackRegistrations.stream()
+                .flatMap(registration -> registration.getFeedbackList().stream()
+                        .filter(feedback -> Boolean.FALSE.equals(feedback.getFeedbackType()))
+                        .map(feedback -> new MyNoFeedbackResponseDto(feedback.getFeedbackContent()))
+                )
+                .collect(Collectors.toList());
+
+        return new MyFeedbackResponseDto(yesFeedbackList, noFeedbackList);
+    }
+
+
+
 }

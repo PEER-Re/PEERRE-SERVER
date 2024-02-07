@@ -5,8 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.umc.peerre.domain.project.dto.request.CreateProjectRequestDto;
 import org.umc.peerre.domain.project.dto.response.CreateProjectResponseDto;
+import org.umc.peerre.domain.project.dto.response.MyFeedbackResponseDto;
+import org.umc.peerre.domain.project.dto.response.TeamInfoResponseDto;
 import org.umc.peerre.domain.project.service.ProjectService;
 import org.umc.peerre.global.common.SuccessResponse;
+import org.umc.peerre.global.config.auth.UserId;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/project")
@@ -25,5 +30,23 @@ public class ProjectController {
     public ResponseEntity<SuccessResponse<?>> closeProject(@PathVariable Long projectId) {
         projectService.closeProject(projectId);
         return SuccessResponse.ok(null);
+    }
+
+    @PostMapping("/{projectId}/reopen")
+    public ResponseEntity<SuccessResponse<?>> reopenProject(@PathVariable Long projectId) {
+        projectService.reopenProject(projectId);
+        return SuccessResponse.ok(null);
+    }
+
+    @GetMapping("/{projectId}/project-info")
+    public ResponseEntity<SuccessResponse<?>> getTeamInfo(@PathVariable Long projectId) {
+        final TeamInfoResponseDto teamInfoResponseDto = projectService.getTeamInfo(projectId);
+        return SuccessResponse.ok(teamInfoResponseDto);
+    }
+
+    @GetMapping("/{projectId}/my-feedback")
+    public ResponseEntity<SuccessResponse<?>> getMyFeedback(@UserId Long userId, @PathVariable Long projectId) {
+        final MyFeedbackResponseDto myFeedbackResponseDto = projectService.getMyFeedback(userId, projectId);
+        return SuccessResponse.ok(myFeedbackResponseDto);
     }
 }
