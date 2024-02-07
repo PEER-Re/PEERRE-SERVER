@@ -1,4 +1,4 @@
-package org.umc.peerre.domain.feedback.dto.request;
+package org.umc.peerre.domain.project.dto.request;
 
 public record CreateCommentRequestDto(
         Long projectId,

@@ -2,7 +2,6 @@ package org.umc.peerre.domain.project.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.umc.peerre.domain.feedback.entity.Comment;
 import org.umc.peerre.domain.feedback.entity.FeedbackAggregation;
 import org.umc.peerre.domain.feedback.entity.FeedbackRegistration;
 import org.umc.peerre.domain.project.constant.Status;

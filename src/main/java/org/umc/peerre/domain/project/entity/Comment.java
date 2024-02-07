@@ -1,4 +1,4 @@
-package org.umc.peerre.domain.feedback.entity;
+package org.umc.peerre.domain.project.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
