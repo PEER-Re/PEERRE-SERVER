@@ -9,6 +9,8 @@ import org.umc.peerre.domain.feedback.repository.CommentRepository;
 import org.umc.peerre.domain.project.repository.ProjectRepository;
 import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.domain.user.repository.UserRepository;
+import org.umc.peerre.global.error.ErrorCode;
+import org.umc.peerre.global.error.exception.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +24,13 @@ public class CommentService {
         String content = createCommentRequestDto.content();
 
         Comment comment = Comment.builder()
-                .project(projectRepository.findById(projectId).get()) //추후 검증 로직 추가
+                .project(projectRepository.findById(projectId)
+                        .orElseThrow(()
+                        -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND)))
                 .content(content)
-                .user(userRepository.findById(userId).get()).build();
+                .user(userRepository.findById(userId)
+                        .orElseThrow(()
+                        -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND))).build();
         Comment save = commentRepository.save(comment);
         return CreateCommentResponseDto.of(save);
     }
