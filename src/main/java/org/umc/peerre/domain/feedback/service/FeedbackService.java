@@ -388,7 +388,7 @@ public class FeedbackService {
 
                 // FeedbackList에서 yes 피드백 개수 계산
                 Integer yesFeedbackNum = (int) feedbackRegistration.getFeedbackList().stream()
-                        .filter(Feedback::getFeedbackType)
+                        .filter(feedback -> Boolean.TRUE.equals(Optional.ofNullable(feedback.getFeedbackType()).orElse(false)))
                         .count();
 
                 teamFeedbackInfo.setYesFeedbackNum(teamFeedbackInfo.getYesFeedbackNum() + yesFeedbackNum);
@@ -396,7 +396,7 @@ public class FeedbackService {
                 // goodFeedbackContent 추가
                 Set<String> goodFeedbackContent = teamFeedbackInfo.getGoodFeedbackContent();
                 goodFeedbackContent.addAll(feedbackRegistration.getFeedbackList().stream()
-                        .filter(feedback -> feedback.getFeedbackType() && feedback.getFeedbackContent() != null)
+                        .filter(feedback -> Boolean.TRUE.equals(Optional.ofNullable(feedback.getFeedbackType()).orElse(false)) && feedback.getFeedbackContent() != null)
                         .map(Feedback::getFeedbackContent)
                         .collect(Collectors.toSet()));
                 teamFeedbackInfo.setGoodFeedbackContent(goodFeedbackContent);
