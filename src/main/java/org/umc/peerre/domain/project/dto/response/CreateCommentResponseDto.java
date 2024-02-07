@@ -1,7 +1,7 @@
-package org.umc.peerre.domain.feedback.dto.response;
+package org.umc.peerre.domain.project.dto.response;
 
 import lombok.Builder;
-import org.umc.peerre.domain.feedback.entity.Comment;
+import org.umc.peerre.domain.project.entity.Comment;
 
 @Builder
 public record CreateCommentResponseDto(

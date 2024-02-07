@@ -1,11 +1,11 @@
-package org.umc.peerre.domain.feedback.service;
+package org.umc.peerre.domain.project.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.umc.peerre.domain.feedback.dto.request.CreateCommentRequestDto;
-import org.umc.peerre.domain.feedback.dto.response.CreateCommentResponseDto;
-import org.umc.peerre.domain.feedback.entity.Comment;
-import org.umc.peerre.domain.feedback.repository.CommentRepository;
+import org.umc.peerre.domain.project.dto.request.CreateCommentRequestDto;
+import org.umc.peerre.domain.project.dto.response.CreateCommentResponseDto;
+import org.umc.peerre.domain.project.entity.Comment;
+import org.umc.peerre.domain.project.repository.CommentRepository;
 import org.umc.peerre.domain.project.repository.ProjectRepository;
 import org.umc.peerre.domain.user.repository.UserRepository;
 import org.umc.peerre.global.error.ErrorCode;
