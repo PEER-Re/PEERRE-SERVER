@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.PARAMETER)
-@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER) // --- 1
+@Retention(RetentionPolicy.RUNTIME) // --- 2
 public @interface UserId {
 }

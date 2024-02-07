@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.umc.peerre.global.error.ErrorCode;
 import org.umc.peerre.global.error.dto.ErrorResponse;
 import org.umc.peerre.global.error.exception.BusinessException;
@@ -66,6 +67,17 @@ public class GlobalExceptionHandler {
         final ErrorResponse errorBaseResponse = ErrorResponse.of(errorCode);
         return ResponseEntity.status(errorCode.getHttpStatus()).body(errorBaseResponse);
     }
+
+    /**
+     * NoResourceFoundException을 handling합니다.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleNoResoureException(final NoResourceFoundException e) {
+        log.error(">>> handle: NoResoureException ", e);
+        final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.RESOURCE_NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBaseResponse);
+    }
+
 
     /**
      * 위에서 정의한 Exception을 제외한 모든 예외를 handling합니다.
