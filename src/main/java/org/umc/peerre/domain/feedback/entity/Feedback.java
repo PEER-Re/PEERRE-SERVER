@@ -17,11 +17,11 @@ public class Feedback  extends BaseTimeEntity {
     @Id
     private Long id;
 
-    @Column
-    private String feedback_content;
+    @Column(name="feedback_content")
+    private String feedbackContent;
 
-    @Column
-    private Boolean feedback_type;
+    @Column(name="feedback_type")
+    private Boolean feedbackType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="feedbackregistration_id", referencedColumnName = "id")
