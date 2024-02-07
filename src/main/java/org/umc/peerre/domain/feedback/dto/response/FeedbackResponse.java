@@ -1,34 +1,86 @@
 package org.umc.peerre.domain.feedback.dto.response;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
 import org.umc.peerre.domain.feedback.dto.request.FeedbackRequest;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class FeedbackResponse {
 
     @Getter
     @Setter
+    @Builder
     @NoArgsConstructor
-    public static class yesFeedback {
-        private Boolean goodCommunication;
-        private Boolean punctual;
-        private Boolean competent;
-        private Boolean articulate;
-        private Boolean thorough;
-        private Boolean engaging;
+    @AllArgsConstructor
+    public static class YesFeedbackInfo {
+        private String goodCommunication;
+        private Integer goodCommunicationNum;
+
+        private String goodPunctual;
+        private Integer goodPunctualNum;
+
+        private String goodCompetent;
+        private Integer goodCompetentNum;
+
+        private String goodArticulate;
+        private Integer goodArticulateNum;
+
+        private String goodThorough;
+        private Integer goodThoroughNum;
+
+        private String goodEngaging;
+        private Integer goodEngagingNum;
     }
 
     @Getter
     @Setter
+    @Builder
     @NoArgsConstructor
-    public static class noFeedback {
-        private Boolean badCommunication;
-        private Boolean notPunctual;
-        private Boolean notCompetent;
-        private Boolean notArticulate;
-        private Boolean notThorough;
-        private Boolean notEngaging;
+    @AllArgsConstructor
+    public static class NoFeedbackInfo {
+        private String badCommunication;
+        private Integer badCommunicationNum;
+
+        private String badPunctual;
+        private Integer badPunctualNum;
+
+        private String badCompetent;
+        private Integer badCompetentNum;
+
+        private String badArticulate;
+        private Integer badArticulateNum;
+
+        private String badThorough;
+        private Integer badThoroughNum;
+
+        private String badEngaging;
+        private Integer badEngagingNum;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserInfo {
+        private String teamName;
+        private String teamProfile;
+        private String projectName;
+        private String nickname;
+        private String profileImageUrl;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class myReportResponse {
+        YesFeedbackInfo yesFeedbackInfo;
+        NoFeedbackInfo noFeedbackInfo;
+        UserInfo userInfo;
+        Integer totalEvaluationNum;
+        LocalDateTime lastModifiedDate;
     }
 
 }
