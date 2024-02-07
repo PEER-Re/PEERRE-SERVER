@@ -19,11 +19,11 @@ public class FeedbackAggregation extends BaseTimeEntity {
     @Id
     private Long id;
 
-    @Column
-    private Integer yes_feedback_count;
+    @Column(name="yes_feedback_count")
+    private Integer yesFeedbackCount;
 
-    @Column
-    private Boolean evaluation_status;
+    @Column(name="evaluation_status")
+    private Boolean evaluationStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id", referencedColumnName = "id")

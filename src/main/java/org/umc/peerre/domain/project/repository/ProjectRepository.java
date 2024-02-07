@@ -9,4 +9,8 @@ import java.util.Optional;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<Object> findByTeamspaceAndStatus(Teamspace teamspace, Status status);
+
+    Optional<Object> findByTeamspaceIdAndStatus(Long teamId, Status status);
+
+    Optional<Project> findFirstByTeamspaceIdAndStatusOrderByEndDayDesc(Long teamId, Status status);
 }
