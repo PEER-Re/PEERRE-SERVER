@@ -45,4 +45,8 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserTeamspace> userTeamspaceList = new ArrayList<>();
 
+    public void updateUserInfo(String nickname, String profileImageUrl) {
+        this.nickname = nickname;
+        this.profileImgUrl = profileImageUrl;
+    }
 }

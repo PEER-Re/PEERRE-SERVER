@@ -7,6 +7,8 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import org.umc.peerre.domain.user.entity.User;
+import org.umc.peerre.global.config.auth.principal.PrincipalDetails;
 
 @Component
 public class UserIdArgumentResolver implements HandlerMethodArgumentResolver {
@@ -19,8 +21,10 @@ public class UserIdArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return SecurityContextHolder.getContext()
+        PrincipalDetails principal = (PrincipalDetails)SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
+        User user = principal.getUser();
+        return user.getId();
     }
 }

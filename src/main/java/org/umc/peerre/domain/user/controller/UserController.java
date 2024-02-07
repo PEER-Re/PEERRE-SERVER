@@ -3,9 +3,11 @@ package org.umc.peerre.domain.user.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.umc.peerre.domain.user.dto.response.UserTokenResponseDto;
+import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.domain.user.service.UserService;
 import org.umc.peerre.global.common.SuccessResponse;
+import org.umc.peerre.global.config.auth.UserId;
+
 
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
@@ -14,16 +16,14 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * 발급된 토큰 검증 테스트 api
+     * @param userId 토큰으로부터 추출해온 User 정보로 꺼내온 User 객체의 아이디
+     * @return
+     */
     @GetMapping("/test")
-    public ResponseEntity<SuccessResponse<?>> test() {
-        String response = "Test";
-        return SuccessResponse.ok(response);
-    }
-
-    // 임시 발급 API 입니다. 추후 로그인 기능이 완성되면 삭제할 예정입니다.
-    @PostMapping("/token/{userId}")
-    public ResponseEntity<SuccessResponse<?>> getToken(@PathVariable Long userId) {
-        final UserTokenResponseDto userTokenResponseDto = userService.getToken(userId);
-        return SuccessResponse.created(userTokenResponseDto);
+    public ResponseEntity<SuccessResponse<?>> test(@UserId Long userId) {
+        return SuccessResponse.ok("유저 아이디 = "+userId);
     }
 }
+
