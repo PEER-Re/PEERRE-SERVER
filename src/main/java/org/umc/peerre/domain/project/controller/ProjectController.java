@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.umc.peerre.domain.project.dto.request.CreateProjectRequestDto;
 import org.umc.peerre.domain.project.dto.response.CreateProjectResponseDto;
+import org.umc.peerre.domain.project.dto.response.TeamInfoResponseDto;
 import org.umc.peerre.domain.project.service.ProjectService;
 import org.umc.peerre.global.common.SuccessResponse;
 
@@ -25,5 +26,17 @@ public class ProjectController {
     public ResponseEntity<SuccessResponse<?>> closeProject(@PathVariable Long projectId) {
         projectService.closeProject(projectId);
         return SuccessResponse.ok(null);
+    }
+
+    @PostMapping("/{projectId}/reopen")
+    public ResponseEntity<SuccessResponse<?>> reopenProject(@PathVariable Long projectId) {
+        projectService.reopenProject(projectId);
+        return SuccessResponse.ok(null);
+    }
+
+    @GetMapping("/{projectId}/team-info")
+    public ResponseEntity<SuccessResponse<?>> getTeamInfo(@PathVariable Long projectId) {
+        final TeamInfoResponseDto teamInfoResponseDto = projectService.getTeamInfo(projectId);
+        return SuccessResponse.ok(teamInfoResponseDto);
     }
 }
