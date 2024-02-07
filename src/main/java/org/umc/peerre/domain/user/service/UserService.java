@@ -29,9 +29,6 @@ public class UserService {
         String email = userInfo.getEmail();
         String nickname = userInfo.getNickname();
         String profileImgUrl = userInfo.getProfileImgUrl();
-        log.info("userInfo 이메일: "+email);
-        log.info("userInfo 닉네임: "+nickname);
-        log.info("userInfo profileImgUrl: "+profileImgUrl);
 
         return userRepository.findBySocialId(email)
                 .map(user -> {

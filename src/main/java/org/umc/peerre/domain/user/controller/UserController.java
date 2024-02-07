@@ -28,4 +28,4 @@ public class UserController {
         return SuccessResponse.ok("닉네임 = " + user.getNickname() + ", 소셜아이디 = " + user.getSocialId());
     }
 }
-}
+

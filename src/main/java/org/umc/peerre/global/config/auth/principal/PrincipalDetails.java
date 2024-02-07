@@ -8,7 +8,7 @@ import org.umc.peerre.domain.user.entity.User;
 import java.util.Collection;
 import java.util.Map;
 
-@Data //굳이 이것까지...? getter면 되지않나요
+@Data
 public class PrincipalDetails implements OAuth2User {
 
     private User user;

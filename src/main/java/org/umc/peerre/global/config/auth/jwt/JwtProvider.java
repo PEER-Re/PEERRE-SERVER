@@ -2,7 +2,10 @@ package org.umc.peerre.global.config.auth.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,9 +43,15 @@ public class JwtProvider {
             JWT.require(Algorithm.HMAC512(SECRET))
                     .build()
                     .verify(accessToken);
+        } catch (SecurityException | MalformedJwtException e) {
+            throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN_VALUE);
         } catch (ExpiredJwtException e) {
             throw new UnauthorizedException(ErrorCode.EXPIRED_ACCESS_TOKEN);
-        } catch (Exception e) {
+        } catch (UnsupportedJwtException e) {
+            throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN_VALUE);
+        } catch (IllegalArgumentException e) {
+            throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN_VALUE);
+        } catch (JWTDecodeException e) {
             throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN_VALUE);
         }
     }

@@ -21,6 +21,7 @@ import org.umc.peerre.global.error.exception.UnauthorizedException;
 import java.io.IOException;
 
 import static org.umc.peerre.global.error.ErrorCode.BAD_REQUEST;
+import static org.umc.peerre.global.error.ErrorCode.MEMBER_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -50,17 +51,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         // -------------------------------- 삭제 끝 //
 
-        String accessToken = request.getHeader(accessHeader);
+        String accessToken = request.getHeader(accessHeader); //둘다 null
 
-        if (StringUtils.hasText(accessToken) && accessToken.startsWith(PREFIX)) {
+        //AUTHORIZATION 헤더가 없을 경우
+        if (accessToken == null) {
+            throw new UnauthorizedException(ErrorCode.NONE_AUTHORIZATION_HEADER);
+        }
+        //Bear로 시작하지 않는 경우
+        if (!accessToken.startsWith(PREFIX)) { //둘다 그럴지도
+            throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN);
+        }else {
             return accessToken.replace(PREFIX, "");
         }
-        throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN);
     }
 
     private void setAuthentication(String socialId) {
         User user = userRepository.findBySocialId(socialId)
-                .orElseThrow(()-> new UnauthorizedException(BAD_REQUEST));
+                .orElseThrow(()-> new UnauthorizedException(MEMBER_NOT_FOUND));
+        log.info("이메일로 유저 찾아오기");
+
         // user를 세션에 저장하기 위해 authentication 객체를 생성한다.
         PrincipalDetails principalDetails = new PrincipalDetails(user);
         Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());

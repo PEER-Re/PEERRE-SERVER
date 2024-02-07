@@ -24,10 +24,6 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        log.info("getAccessToken:" + userRequest.getAccessToken().getTokenValue());
-        log.info("getClientRegistration:" + userRequest.getClientRegistration());
-        log.info("getAttributes:" + oAuth2User.getAttributes());
-
         //registrationId = kakao
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         //kakao 리소스 서버로부터 받아온 attributes로 userInfo 생성
