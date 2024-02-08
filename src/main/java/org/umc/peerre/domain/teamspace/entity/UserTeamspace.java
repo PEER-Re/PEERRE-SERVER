@@ -2,6 +2,7 @@ package org.umc.peerre.domain.teamspace.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.umc.peerre.domain.teamspace.constant.Role;
 import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.global.common.BaseTimeEntity;
 
@@ -18,7 +19,7 @@ public class UserTeamspace extends BaseTimeEntity {
     @Id
     private Long id;
 
-    private Boolean role;
+    private Role role;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id", referencedColumnName = "id")
