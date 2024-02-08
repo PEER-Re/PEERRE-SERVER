@@ -274,40 +274,42 @@ public class FeedbackService {
                 List<Feedback> feedbackList = signleFeedbackRegistration.getFeedbackList();
 
                 for (Feedback feedback : feedbackList) {
-                    if (feedback.getFeedbackContent().equals("말을 조리있게 잘해요") && feedback.getFeedbackType()) {
-                        yesFeedbackInfo.setGoodArticulateNum(yesFeedbackInfo.getGoodArticulateNum() + 1);
-                    } else if (feedback.getFeedbackContent().equals("말을 조리있게 못해요") && !feedback.getFeedbackType()) {
-                        noFeedbackInfo.setBadArticulateNum(noFeedbackInfo.getBadArticulateNum() + 1);
-                    }
+                    if(feedback.getFeedbackType()!=null) {
+                        if (feedback.getFeedbackContent().equals("말을 조리있게 잘해요") && feedback.getFeedbackType()) {
+                            yesFeedbackInfo.setGoodArticulateNum(yesFeedbackInfo.getGoodArticulateNum() + 1);
+                        } else if (feedback.getFeedbackContent().equals("말을 조리있게 못해요") && !feedback.getFeedbackType()) {
+                            noFeedbackInfo.setBadArticulateNum(noFeedbackInfo.getBadArticulateNum() + 1);
+                        }
 
-                    if (feedback.getFeedbackContent().equals("능력이 뛰어나요") && feedback.getFeedbackType()) {
-                        yesFeedbackInfo.setGoodCompetentNum(yesFeedbackInfo.getGoodCompetentNum() + 1);
-                    } else if (feedback.getFeedbackContent().equals("능력이 뒤떨어져요") && !feedback.getFeedbackType()) {
-                        noFeedbackInfo.setBadCompetentNum(noFeedbackInfo.getBadCompetentNum() + 1);
-                    }
+                        if (feedback.getFeedbackContent().equals("능력이 뛰어나요") && feedback.getFeedbackType()) {
+                            yesFeedbackInfo.setGoodCompetentNum(yesFeedbackInfo.getGoodCompetentNum() + 1);
+                        } else if (feedback.getFeedbackContent().equals("능력이 뒤떨어져요") && !feedback.getFeedbackType()) {
+                            noFeedbackInfo.setBadCompetentNum(noFeedbackInfo.getBadCompetentNum() + 1);
+                        }
 
-                    if (feedback.getFeedbackContent().equals("재미있어요") && feedback.getFeedbackType()) {
-                        yesFeedbackInfo.setGoodEngagingNum(yesFeedbackInfo.getGoodEngagingNum() + 1);
-                    } else if (feedback.getFeedbackContent().equals("재미없어요") && !feedback.getFeedbackType()) {
-                        noFeedbackInfo.setBadEngagingNum(noFeedbackInfo.getBadEngagingNum() + 1);
-                    }
+                        if (feedback.getFeedbackContent().equals("재미있어요") && feedback.getFeedbackType()) {
+                            yesFeedbackInfo.setGoodEngagingNum(yesFeedbackInfo.getGoodEngagingNum() + 1);
+                        } else if (feedback.getFeedbackContent().equals("재미없어요") && !feedback.getFeedbackType()) {
+                            noFeedbackInfo.setBadEngagingNum(noFeedbackInfo.getBadEngagingNum() + 1);
+                        }
 
-                    if (feedback.getFeedbackContent().equals("시간약속을 잘 지켜요") && feedback.getFeedbackType()) {
-                        yesFeedbackInfo.setGoodPunctualNum(yesFeedbackInfo.getGoodPunctualNum() + 1);
-                    } else if (feedback.getFeedbackContent().equals("시간약속을 잘 안지켜요") && !feedback.getFeedbackType()) {
-                        noFeedbackInfo.setBadPunctualNum(noFeedbackInfo.getBadPunctualNum() + 1);
-                    }
+                        if (feedback.getFeedbackContent().equals("시간약속을 잘 지켜요") && feedback.getFeedbackType()) {
+                            yesFeedbackInfo.setGoodPunctualNum(yesFeedbackInfo.getGoodPunctualNum() + 1);
+                        } else if (feedback.getFeedbackContent().equals("시간약속을 잘 안지켜요") && !feedback.getFeedbackType()) {
+                            noFeedbackInfo.setBadPunctualNum(noFeedbackInfo.getBadPunctualNum() + 1);
+                        }
 
-                    if (feedback.getFeedbackContent().equals("연락이 잘 돼요") && feedback.getFeedbackType()) {
-                        yesFeedbackInfo.setGoodCommunicationNum(yesFeedbackInfo.getGoodCommunicationNum() + 1);
-                    } else if (feedback.getFeedbackContent().equals("연락이 안 돼요") && !feedback.getFeedbackType()) {
-                        noFeedbackInfo.setBadCommunicationNum(noFeedbackInfo.getBadCommunicationNum() + 1);
-                    }
+                        if (feedback.getFeedbackContent().equals("연락이 잘 돼요") && feedback.getFeedbackType()) {
+                            yesFeedbackInfo.setGoodCommunicationNum(yesFeedbackInfo.getGoodCommunicationNum() + 1);
+                        } else if (feedback.getFeedbackContent().equals("연락이 안 돼요") && !feedback.getFeedbackType()) {
+                            noFeedbackInfo.setBadCommunicationNum(noFeedbackInfo.getBadCommunicationNum() + 1);
+                        }
 
-                    if (feedback.getFeedbackContent().equals("빈틈이 없어요") && feedback.getFeedbackType()) {
-                        yesFeedbackInfo.setGoodThoroughNum(yesFeedbackInfo.getGoodThoroughNum() + 1);
-                    } else if (feedback.getFeedbackContent().equals("빈틈이 있어요") && !feedback.getFeedbackType()) {
-                        noFeedbackInfo.setBadThoroughNum(noFeedbackInfo.getBadThoroughNum() + 1);
+                        if (feedback.getFeedbackContent().equals("빈틈이 없어요") && feedback.getFeedbackType()) {
+                            yesFeedbackInfo.setGoodThoroughNum(yesFeedbackInfo.getGoodThoroughNum() + 1);
+                        } else if (feedback.getFeedbackContent().equals("빈틈이 있어요") && !feedback.getFeedbackType()) {
+                            noFeedbackInfo.setBadThoroughNum(noFeedbackInfo.getBadThoroughNum() + 1);
+                        }
                     }
                 }
             }
