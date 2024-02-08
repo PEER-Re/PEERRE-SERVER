@@ -59,10 +59,11 @@ public class FeedbackService {
                     .project(project)
                     .build();
 
-            FeedbackAggregation feedbackAggregation = FeedbackAggregation.builder()
-                    .user(user)
-                    .project(project)
-                    .build();
+            FeedbackAggregation feedbackAggregation = feedbackAggregationRepository.findByUserAndProject(user, project)
+                    .orElseGet(() -> FeedbackAggregation.builder()
+                            .user(user)
+                            .project(project)
+                            .build());
 
             if (request != null) {
                 List<Feedback> feedbackList = new ArrayList<>();
