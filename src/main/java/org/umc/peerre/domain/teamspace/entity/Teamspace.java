@@ -33,6 +33,9 @@ public class Teamspace extends BaseTimeEntity {
     @Column
     private String invitation_code;
 
+    @Column
+    private Long leader_id;
+
     @OneToMany(mappedBy = "teamspace", cascade = CascadeType.ALL)
     private List<UserTeamspace> userTeamspaceList = new ArrayList<>();
 
