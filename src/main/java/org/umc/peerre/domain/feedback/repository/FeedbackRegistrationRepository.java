@@ -12,8 +12,11 @@ import java.util.Optional;
 @Repository
 public interface FeedbackRegistrationRepository extends JpaRepository<FeedbackRegistration,Long> {
     boolean existsByRecipientIdAndUserAndProject(Long recipientId, User user, Project project);
-    FeedbackRegistration findByRecipientIdAndUserAndProject(Long recipientId, User user, Project project);
+    Optional<FeedbackRegistration> findByRecipientIdAndUserAndProject(Long recipientId, User user, Project project);
     Optional<List<FeedbackRegistration>> findByRecipientIdAndProject(Long recipientId, Project project);
     Optional<FeedbackRegistration> findByUser(User user);
     Optional<List<FeedbackRegistration>> findByProject(Project project);
+    Optional<List<FeedbackRegistration>> findByUserAndProject(User user, Project project);
+
+    Optional<List<FeedbackRegistration>> findByRecipientIdInAndUserAndProject(List<Long> recipientIds, User user, Project project);
 }

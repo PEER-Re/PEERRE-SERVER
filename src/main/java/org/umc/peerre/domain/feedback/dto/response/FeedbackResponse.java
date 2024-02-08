@@ -116,4 +116,25 @@ public class FeedbackResponse {
         private TeamInfo teamInfo;
         private List<TeamFeedbackInfo> teamFeedbackInfoList;
     }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SentFeedback {
+        private String teamUserNickname;
+        private String teamUserProfileImageUrl;
+        private String teamName;
+        private List<String> yesFeedbackList;
+        private List<String> noFeedbackList;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SentFeedbackResponse {
+        private List<SentFeedback> sentFeedbackList;
+    }
 }
