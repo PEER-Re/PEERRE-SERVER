@@ -29,8 +29,6 @@ public class FeedbackController {
     public ResponseEntity<SuccessResponse<?>> enrollFeedback(@PathVariable("userId") Long userId,@PathVariable("teamUserId") Long teamUserId, @PathVariable("projectId")Long projectId
             , @RequestBody FeedbackRequest.Feedback request) {
 
-        //Long userId=Long.parseLong(authentication.getName());
-
         String response = feedbackService.enrollFeedback(userId, teamUserId,projectId,request);
 
         return SuccessResponse.ok(response);
@@ -45,10 +43,12 @@ public class FeedbackController {
                     content = @Content(schema = @Schema(implementation = ResponseEntity.class))),
     })
     @PostMapping("projects/{projectId}/users/{teamUserId}/feedback")
-    public ResponseEntity<SuccessResponse<?>> enrollFeedback(Authentication authentication,@PathVariable("teamUserId") Long teamUserId, @PathVariable("projectId")Long projectId
+    public ResponseEntity<SuccessResponse<?>> enrollFeedback(@PathVariable("teamUserId") Long teamUserId, @PathVariable("projectId")Long projectId
             , @RequestBody FeedbackRequest.Feedback request) {
 
-        Long userId=Long.parseLong(authentication.getName());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        Long userId = principalDetails.getUser().getId();
 
         String response = feedbackService.enrollFeedback(userId, teamUserId,projectId,request);
 
@@ -64,9 +64,7 @@ public class FeedbackController {
                     content = @Content(schema = @Schema(implementation = ResponseEntity.class))),
     })
     @GetMapping("/projects/{projectId}/users/{userId}/myReport")
-    public ResponseEntity<SuccessResponse<?>> enrollFeedback(@PathVariable("userId")Long userId,@PathVariable("projectId")Long projectId) {
-
-        //Long userId=Long.parseLong(authentication.getName());
+    public ResponseEntity<SuccessResponse<?>> getMyReport(@PathVariable("userId")Long userId,@PathVariable("projectId")Long projectId) {
 
         FeedbackResponse.myReportResponse myReportResponse = feedbackService.getMyReport(userId,projectId);
 
@@ -81,9 +79,11 @@ public class FeedbackController {
                     content = @Content(schema = @Schema(implementation = ResponseEntity.class))),
     })
     @PostMapping("/projects/{projectId}/myReport")
-    public ResponseEntity<SuccessResponse<?>> enrollFeedback(Authentication authentication,@PathVariable("projectId")Long projectId) {
+    public ResponseEntity<SuccessResponse<?>> enrollFeedback(@PathVariable("projectId")Long projectId) {
 
-        Long userId=Long.parseLong(authentication.getName());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        Long userId = principalDetails.getUser().getId();
 
         FeedbackResponse.myReportResponse myReportResponse = feedbackService.getMyReport(userId,projectId);
 
@@ -100,8 +100,6 @@ public class FeedbackController {
     @GetMapping("/projects/{projectId}/users/{userId}/teamReport")
     public ResponseEntity<SuccessResponse<?>> getTeamReport(@PathVariable("userId")Long userId,@PathVariable("projectId")Long projectId) {
 
-        //Long userId=Long.parseLong(authentication.getName());
-
         FeedbackResponse.TeamReportResponse teamReportResponse = feedbackService.getTeamReport(userId,projectId);
 
         return SuccessResponse.ok(teamReportResponse);
@@ -115,8 +113,6 @@ public class FeedbackController {
     })
     @GetMapping("/projects/{projectId}/users/{userId}/feedback")
     public ResponseEntity<SuccessResponse<?>> getSentFeedbacks(@PathVariable("userId")Long userId,@PathVariable("projectId")Long projectId) {
-
-        //Long userId=Long.parseLong(authentication.getName());
 
         FeedbackResponse.SentFeedbackResponse sentFeedbackResponse = feedbackService.getSentFeedbacks(userId,projectId);
 
