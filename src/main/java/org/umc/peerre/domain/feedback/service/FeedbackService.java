@@ -3,6 +3,7 @@ package org.umc.peerre.domain.feedback.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,6 +25,7 @@ import org.umc.peerre.domain.teamspace.repository.UserTeamspaceRepository;
 import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.domain.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -316,6 +318,7 @@ public class FeedbackService {
                 .noFeedbackInfo(noFeedbackInfo)
                 .yesFeedbackInfo(yesFeedbackInfo)
                 .totalEvaluationNum(teamspace.getSize())
+                .lastModifiedDate(LocalDateTime.now())
                 .build();
     }
 
