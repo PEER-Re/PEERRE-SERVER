@@ -378,32 +378,41 @@ public class FeedbackService {
             Long teamUserId = id;
             // FeedbackRegistration 조회
             List<FeedbackRegistration> feedbackRegistrations = feedbackRegistrationRepository.findByRecipientIdAndProject(teamUserId, project)
-                    .orElseThrow(() -> new EntityNotFoundException("해당하는 피드백 등록이 없습니다."));
+                    .orElse(new ArrayList<>());
 
-            for (FeedbackRegistration feedbackRegistration : feedbackRegistrations) {
-                Long recipientId = feedbackRegistration.getRecipientId();
-                FeedbackResponse.TeamFeedbackInfo teamFeedbackInfo = teamFeedbackInfoMap.getOrDefault(recipientId, FeedbackResponse.TeamFeedbackInfo.builder()
+            if(feedbackRegistrations.isEmpty()) {
+                FeedbackResponse.TeamFeedbackInfo teamFeedbackInfo = FeedbackResponse.TeamFeedbackInfo.builder()
+                        .rank(teamspace.getSize())
                         .yesFeedbackNum(0)
                         .goodFeedbackContent(new HashSet<>())
-                        .build());
+                        .build();
+                teamFeedbackInfoMap.put(teamUserId, teamFeedbackInfo);
+            } else {
+                for (FeedbackRegistration feedbackRegistration : feedbackRegistrations) {
+                    Long recipientId = feedbackRegistration.getRecipientId();
+                    FeedbackResponse.TeamFeedbackInfo teamFeedbackInfo = teamFeedbackInfoMap.getOrDefault(recipientId, FeedbackResponse.TeamFeedbackInfo.builder()
+                            .yesFeedbackNum(0)
+                            .goodFeedbackContent(new HashSet<>())
+                            .build());
 
-                // FeedbackList에서 yes 피드백 개수 계산
-                Integer yesFeedbackNum = (int) feedbackRegistration.getFeedbackList().stream()
-                        .filter(feedback -> Boolean.TRUE.equals(Optional.ofNullable(feedback.getFeedbackType()).orElse(false)))
-                        .count();
+                    // FeedbackList에서 yes 피드백 개수 계산
+                    Integer yesFeedbackNum = (int) feedbackRegistration.getFeedbackList().stream()
+                            .filter(feedback -> Boolean.TRUE.equals(Optional.ofNullable(feedback.getFeedbackType()).orElse(false)))
+                            .count();
 
-                teamFeedbackInfo.setYesFeedbackNum(teamFeedbackInfo.getYesFeedbackNum() + yesFeedbackNum);
+                    teamFeedbackInfo.setYesFeedbackNum(teamFeedbackInfo.getYesFeedbackNum() + yesFeedbackNum);
 
-                // goodFeedbackContent 추가
-                Set<String> goodFeedbackContent = teamFeedbackInfo.getGoodFeedbackContent();
-                goodFeedbackContent.addAll(feedbackRegistration.getFeedbackList().stream()
-                        .filter(feedback -> Boolean.TRUE.equals(Optional.ofNullable(feedback.getFeedbackType()).orElse(false)) && feedback.getFeedbackContent() != null)
-                        .map(Feedback::getFeedbackContent)
-                        .collect(Collectors.toSet()));
-                teamFeedbackInfo.setGoodFeedbackContent(goodFeedbackContent);
+                    // goodFeedbackContent 추가
+                    Set<String> goodFeedbackContent = teamFeedbackInfo.getGoodFeedbackContent();
+                    goodFeedbackContent.addAll(feedbackRegistration.getFeedbackList().stream()
+                            .filter(feedback -> Boolean.TRUE.equals(Optional.ofNullable(feedback.getFeedbackType()).orElse(false)) && feedback.getFeedbackContent() != null)
+                            .map(Feedback::getFeedbackContent)
+                            .collect(Collectors.toSet()));
+                    teamFeedbackInfo.setGoodFeedbackContent(goodFeedbackContent);
 
-                // Map에 저장
-                teamFeedbackInfoMap.put(recipientId, teamFeedbackInfo);
+                    // Map에 저장
+                    teamFeedbackInfoMap.put(recipientId, teamFeedbackInfo);
+                }
             }
         }
 
