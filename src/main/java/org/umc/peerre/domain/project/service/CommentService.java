@@ -49,6 +49,11 @@ public class CommentService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(()
                         -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
+
+        commentRepository.findById(lastCommentId)
+                .orElseThrow(()
+                        -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUNT));
+
         //프로젝트의 회고 리스트
         Page<Comment> comments = fetchComment(project,lastCommentId, size);
 
