@@ -28,7 +28,7 @@ public class ProjectController {
         return SuccessResponse.created(newProject);
     }
 
-    @PostMapping("/comments")
+    @PostMapping("/comment")
     public ResponseEntity<SuccessResponse<?>> createComments(@UserId Long userId, @RequestBody CreateCommentRequestDto createCommentRequestDto) {
         CreateCommentResponseDto newComment = commentService.createComment(userId,createCommentRequestDto);
         return SuccessResponse.created(newComment);
