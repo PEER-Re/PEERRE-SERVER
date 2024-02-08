@@ -3,15 +3,15 @@ package org.umc.peerre.domain.project.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.umc.peerre.domain.project.dto.request.CreateCommentRequestDto;
 import org.umc.peerre.domain.project.dto.request.CreateProjectRequestDto;
-import org.umc.peerre.domain.project.dto.response.CreateProjectResponseDto;
-import org.umc.peerre.domain.project.dto.response.MyFeedbackResponseDto;
-import org.umc.peerre.domain.project.dto.response.TeamInfoResponseDto;
+import org.umc.peerre.domain.project.dto.response.*;
+import org.umc.peerre.domain.project.dto.response.comment.CommentListResponseDto;
+import org.umc.peerre.domain.project.dto.response.comment.CreateCommentResponseDto;
+import org.umc.peerre.domain.project.service.CommentService;
 import org.umc.peerre.domain.project.service.ProjectService;
 import org.umc.peerre.global.common.SuccessResponse;
 import org.umc.peerre.global.config.auth.UserId;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/project")
@@ -19,11 +19,19 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final CommentService commentService;
+
 
     @PostMapping
     public ResponseEntity<SuccessResponse<?>> createProject(@RequestBody CreateProjectRequestDto createProjectRequestDto) {
         final CreateProjectResponseDto newProject = projectService.createProject(createProjectRequestDto);
         return SuccessResponse.created(newProject);
+    }
+
+    @PostMapping("/comments")
+    public ResponseEntity<SuccessResponse<?>> createComments(@UserId Long userId, @RequestBody CreateCommentRequestDto createCommentRequestDto) {
+        CreateCommentResponseDto newComment = commentService.createComment(userId,createCommentRequestDto);
+        return SuccessResponse.created(newComment);
     }
 
     @PostMapping("/{projectId}")
@@ -48,5 +56,11 @@ public class ProjectController {
     public ResponseEntity<SuccessResponse<?>> getMyFeedback(@UserId Long userId, @PathVariable Long projectId) {
         final MyFeedbackResponseDto myFeedbackResponseDto = projectService.getMyFeedback(userId, projectId);
         return SuccessResponse.ok(myFeedbackResponseDto);
+    }
+
+    @GetMapping("/{projectId}/comments")
+    public ResponseEntity<SuccessResponse<?>> getCommentList(@PathVariable Long projectId) {
+        final CommentListResponseDto commentListResponseDto = commentService.getCommentList(projectId);
+        return SuccessResponse.ok(commentListResponseDto);
     }
 }
