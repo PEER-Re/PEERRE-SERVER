@@ -106,4 +106,20 @@ public class FeedbackController {
 
         return SuccessResponse.ok(teamReportResponse);
     }
+
+    @Operation(summary = "내가 보낸 피드백 조회")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",description = "OK, 팀 리포트 조회"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "Error Code",description = "Error message",
+                    content = @Content(schema = @Schema(implementation = ResponseEntity.class))),
+    })
+    @GetMapping("/projects/{projectId}/users/{userId}/feedback")
+    public ResponseEntity<SuccessResponse<?>> getSentFeedbacks(@PathVariable("userId")Long userId,@PathVariable("projectId")Long projectId) {
+
+        //Long userId=Long.parseLong(authentication.getName());
+
+        FeedbackResponse.SentFeedbackResponse sentFeedbackResponse = feedbackService.getSentFeedbacks(userId,projectId);
+
+        return SuccessResponse.ok(sentFeedbackResponse);
+    }
 }

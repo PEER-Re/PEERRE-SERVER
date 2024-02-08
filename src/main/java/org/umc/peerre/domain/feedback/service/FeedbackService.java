@@ -135,7 +135,8 @@ public class FeedbackService {
             }
             feedbackAggregationRepository.save(feedbackAggregation);
         } else {
-            FeedbackRegistration feedbackRegistration = feedbackRegistrationRepository.findByRecipientIdAndUserAndProject(teamMemberId, user, project);
+            FeedbackRegistration feedbackRegistration = feedbackRegistrationRepository.findByRecipientIdAndUserAndProject(teamMemberId, user, project)
+                    .orElseThrow(()->new EntityNotFoundException("해당하는 피드백 등록이 없습니다."));
 
             List<Feedback> feedbackList = feedbackRegistration.getFeedbackList();
 
@@ -388,7 +389,7 @@ public class FeedbackService {
 
                 // FeedbackList에서 yes 피드백 개수 계산
                 Integer yesFeedbackNum = (int) feedbackRegistration.getFeedbackList().stream()
-                        .filter(Feedback::getFeedbackType)
+                        .filter(feedback -> Boolean.TRUE.equals(Optional.ofNullable(feedback.getFeedbackType()).orElse(false)))
                         .count();
 
                 teamFeedbackInfo.setYesFeedbackNum(teamFeedbackInfo.getYesFeedbackNum() + yesFeedbackNum);
@@ -396,7 +397,7 @@ public class FeedbackService {
                 // goodFeedbackContent 추가
                 Set<String> goodFeedbackContent = teamFeedbackInfo.getGoodFeedbackContent();
                 goodFeedbackContent.addAll(feedbackRegistration.getFeedbackList().stream()
-                        .filter(feedback -> feedback.getFeedbackType() && feedback.getFeedbackContent() != null)
+                        .filter(feedback -> Boolean.TRUE.equals(Optional.ofNullable(feedback.getFeedbackType()).orElse(false)) && feedback.getFeedbackContent() != null)
                         .map(Feedback::getFeedbackContent)
                         .collect(Collectors.toSet()));
                 teamFeedbackInfo.setGoodFeedbackContent(goodFeedbackContent);
@@ -409,12 +410,93 @@ public class FeedbackService {
         // rank 계산
         List<FeedbackResponse.TeamFeedbackInfo> teamFeedbackInfoList = new ArrayList<>(teamFeedbackInfoMap.values());
         teamFeedbackInfoList.sort(Comparator.comparingInt(FeedbackResponse.TeamFeedbackInfo::getYesFeedbackNum).reversed());
-        for (int i = 0; i < teamFeedbackInfoList.size(); i++) {
-            teamFeedbackInfoList.get(i).setRank(i + 1);
+
+        int rank = 1;
+        int prevYesFeedbackNum = -1;
+        int sameRankCount = 0;
+        for (FeedbackResponse.TeamFeedbackInfo teamFeedbackInfo : teamFeedbackInfoList) {
+            int currentYesFeedbackNum = teamFeedbackInfo.getYesFeedbackNum();
+            if (currentYesFeedbackNum < prevYesFeedbackNum) {
+                rank += sameRankCount;
+                sameRankCount = 1;
+            } else {
+                sameRankCount++;
+            }
+            teamFeedbackInfo.setRank(rank);
+            prevYesFeedbackNum = currentYesFeedbackNum;
         }
+
         return FeedbackResponse.TeamReportResponse.builder()
                 .teamInfo(teamInfo)
                 .teamFeedbackInfoList(teamFeedbackInfoList)
+                .build();
+    }
+
+    public FeedbackResponse.SentFeedbackResponse getSentFeedbacks(Long userId, Long projectId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new EntityNotFoundException("해당하는 유저가 없습니다."));
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(()->new EntityNotFoundException("해당하는 프로젝트가 없습니다."));
+
+        if(project.getStatus()==Status.종료) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"진행중인 프로젝트가 아닙니다.");
+        }
+
+        Long teamId = project.getTeamspace().getId();
+
+        Teamspace teamspace = teamspaceRepository.findById(teamId)
+                .orElseThrow(()->new EntityNotFoundException("해당하는 팀스페이스가 없습니다."));
+
+        List<UserTeamspace> userTeamspaces = userTeamspaceRepository.findByTeamspace(teamspace)
+                .orElseThrow(()->new EntityNotFoundException("해당하는 팀에 속해있는 유저가 없습니다."));
+
+        List<Long> teamUserIds = userTeamspaces.stream()
+                .map(userTeamspace -> userTeamspace.getUser().getId())
+                .toList();
+
+
+        List<FeedbackResponse.SentFeedback> sentFeedbackList = new ArrayList<>();
+        for (Long teamUserId : teamUserIds) {
+            User teamUser = userRepository.findById(teamUserId).orElseThrow(() -> new RuntimeException("해당하는 팀원이 없습니다."));
+            Optional<FeedbackRegistration> feedbackRegistrations = feedbackRegistrationRepository.findByRecipientIdAndUserAndProject(teamUserId, user, project);
+
+            FeedbackResponse.SentFeedback sentFeedback;
+            if (feedbackRegistrations.isPresent()) {
+                FeedbackRegistration feedbackRegistration = feedbackRegistrations.get();
+                sentFeedback = FeedbackResponse.SentFeedback.builder()
+                        .teamName(teamspace.getName())
+                        .teamUserProfileImageUrl(teamUser.getProfileImgUrl())
+                        .teamUserNickname(teamUser.getNickname())
+                        .yesFeedbackList(new ArrayList<>())
+                        .noFeedbackList(new ArrayList<>())
+                        .build();
+
+                for (Feedback feedback : feedbackRegistration.getFeedbackList()) {
+                    if (feedback.getFeedbackType() != null) {
+                        if (feedback.getFeedbackType()) {
+                            sentFeedback.getYesFeedbackList().add(feedback.getFeedbackContent());
+                        } else {
+                            sentFeedback.getNoFeedbackList().add(feedback.getFeedbackContent());
+                        }
+                    }
+                }
+            } else {
+                sentFeedback = FeedbackResponse.SentFeedback.builder()
+                        .teamName(teamspace.getName())
+                        .teamUserProfileImageUrl(teamUser.getProfileImgUrl())
+                        .teamUserNickname(teamUser.getNickname())
+                        .yesFeedbackList(Collections.emptyList())
+                        .noFeedbackList(Collections.emptyList())
+                        .build();
+            }
+
+            sentFeedbackList.add(sentFeedback);
+        }
+
+        return FeedbackResponse.SentFeedbackResponse.builder()
+                .sentFeedbackList(sentFeedbackList)
                 .build();
     }
 }
