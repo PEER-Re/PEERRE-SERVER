@@ -1,6 +1,8 @@
 package org.umc.peerre.domain.project.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.umc.peerre.domain.project.dto.request.CreateCommentRequestDto;
 import org.umc.peerre.domain.project.dto.response.comment.CommentListResponseDto;
@@ -42,16 +44,24 @@ public class CommentService {
         return CreateCommentResponseDto.of(save);
     }
 
-    public CommentListResponseDto getCommentList(Long projectId) {
+    public CommentListResponseDto getCommentList(Long projectId, Long lastCommentId, int size) {
+        //프로젝트 조회
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(()
                         -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
-        List<Comment> commentList = project.getCommentList();
+        //프로젝트의 회고 리스트
+        Page<Comment> comments = fetchComment(project,lastCommentId, size);
 
-        List<EachCommentResponseDto> responseDtoList = commentList.stream()
+        List<EachCommentResponseDto> responseDtoList = comments.stream()
                 .map(comment -> EachCommentResponseDto.of(comment))
                 .collect(Collectors.toList());
 
         return CommentListResponseDto.of(responseDtoList);
     }
+
+    private Page<Comment> fetchComment(Project project, long lastCommentId, int size) {
+        PageRequest pageRequest = PageRequest.of(0, size);
+        return commentRepository.findByProjectAndIdLessThanOrderById(project,lastCommentId, pageRequest);
+    }
+
 }
