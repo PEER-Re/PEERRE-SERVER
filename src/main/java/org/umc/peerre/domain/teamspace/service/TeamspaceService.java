@@ -11,9 +11,7 @@ import org.umc.peerre.domain.project.entity.Comment;
 import org.umc.peerre.domain.project.entity.Project;
 import org.umc.peerre.domain.teamspace.constant.Role;
 import org.umc.peerre.domain.teamspace.dto.request.CreateTeamspaceRequestDto;
-import org.umc.peerre.domain.teamspace.dto.response.CreateTeamspaceResponseDto;
-import org.umc.peerre.domain.teamspace.dto.response.TeamspaceResponseDto;
-import org.umc.peerre.domain.teamspace.dto.response.TeamspacesResponseDto;
+import org.umc.peerre.domain.teamspace.dto.response.*;
 import org.umc.peerre.domain.teamspace.entity.Teamspace;
 import org.umc.peerre.domain.teamspace.entity.UserTeamspace;
 import org.umc.peerre.domain.teamspace.repository.TeamspaceRepository;
@@ -77,5 +75,19 @@ public class TeamspaceService {
                 .collect(Collectors.toList());
 
         return TeamspacesResponseDto.of(teamspaceResponseDtoList);
+    }
+
+    public ProjectsResponseDto getProjects(Long teamspaceId) {
+
+        Teamspace teamspace = teamspaceRepository.findById(teamspaceId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.TEAM_NOT_FOUND.getMessage()));
+
+        List<Project> projectList = teamspace.getProjectList();
+
+        List<ProjectResponseDto> projectResponseDtoList = projectList.stream()
+                .map(project -> ProjectResponseDto.of(project))
+                .collect(Collectors.toList());
+
+        return ProjectsResponseDto.of(projectResponseDtoList);
     }
 }
