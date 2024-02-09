@@ -2,6 +2,7 @@ package org.umc.peerre.domain.teamspace.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 import org.umc.peerre.domain.project.entity.Project;
 import org.umc.peerre.global.common.BaseTimeEntity;
 

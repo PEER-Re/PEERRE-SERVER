@@ -35,4 +35,10 @@ public class TeamspaceController {
         final ProjectsResponseDto projectsResponseDto = teamspaceService.getProjects(teamspaceId);
         return SuccessResponse.ok(projectsResponseDto);
     }
+
+    @DeleteMapping("/{teamspaceId}")
+    public ResponseEntity<SuccessResponse<?>> deleteTeamspace(@UserId Long userId, @PathVariable Long teamspaceId) {
+        return SuccessResponse.ok(teamspaceService.deleteTeamspace(userId, teamspaceId));
+    }
+
 }

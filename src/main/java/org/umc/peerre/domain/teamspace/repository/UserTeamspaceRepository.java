@@ -13,7 +13,12 @@ import java.util.Optional;
 public interface UserTeamspaceRepository extends JpaRepository<UserTeamspace, Long> {
 
     Optional<UserTeamspace> findByUserId(Long userId);
+
     Optional<List<UserTeamspace>> findByTeamspace(Teamspace teamspace);
 
     Optional<List<UserTeamspace>> findByUser(User user);
+
+    List<UserTeamspace> findByTeamspaceId(Long teamspaceId);
+
+    Optional<UserTeamspace> findByUserIdAndTeamspaceId(Long userId, Long teamspaceId);
 }
