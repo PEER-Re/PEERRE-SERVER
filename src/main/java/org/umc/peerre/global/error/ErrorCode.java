@@ -36,6 +36,7 @@ public enum ErrorCode {
      * 403 Forbidden
      */
     FORBIDDEN(HttpStatus.FORBIDDEN, "리소스 접근 권한이 없습니다."),
+    TEAM_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "팀스페이스 삭제 권한이 없습니다."),
 
     /**
      * 404 Not Found
