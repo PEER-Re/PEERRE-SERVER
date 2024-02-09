@@ -19,6 +19,7 @@ import org.umc.peerre.domain.teamspace.repository.UserTeamspaceRepository;
 import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.domain.user.repository.UserRepository;
 import org.umc.peerre.global.error.ErrorCode;
+import org.umc.peerre.global.error.exception.ForbiddenException;
 
 import java.util.List;
 import java.util.Optional;
@@ -92,7 +93,7 @@ public class TeamspaceService {
         return ProjectsResponseDto.of(projectResponseDtoList);
     }
 
-    public Boolean deleteTeamspace(Long userId, Long teamspaceId) {
+    public boolean deleteTeamspace(Long userId, Long teamspaceId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND.getMessage()));
 
@@ -103,7 +104,7 @@ public class TeamspaceService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND.getMessage()));
 
         if (userTeamspace.getRole()!=Role.Leader){
-            throw new RuntimeException("팀 스페이스 삭제는 팀장만 가능합니다.");
+            throw new ForbiddenException(ErrorCode.TEAM_DELETE_FORBIDDEN);
         }
 
         List<UserTeamspace> userTeamspaceList = userTeamspaceRepository.findByTeamspaceId(teamspaceId);
