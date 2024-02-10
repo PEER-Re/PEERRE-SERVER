@@ -33,6 +33,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             handleUnauthorizedException(response, e);
         } catch (TemporaryException e) {
             handleTempException(request, response, e);
+        } catch (Exception e) {
+            handleException(response);
         }
     }
 

@@ -1,6 +1,9 @@
 package org.umc.peerre.domain.project.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.umc.peerre.domain.project.dto.request.CreateCommentRequestDto;
 import org.umc.peerre.domain.project.dto.response.comment.CommentListResponseDto;
@@ -15,11 +18,11 @@ import org.umc.peerre.global.error.ErrorCode;
 import org.umc.peerre.global.error.exception.EntityNotFoundException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommentService {
     private final CommentRepository commentRepository;
     private final ProjectRepository projectRepository;
@@ -42,16 +45,26 @@ public class CommentService {
         return CreateCommentResponseDto.of(save);
     }
 
-    public CommentListResponseDto getCommentList(Long projectId) {
+    public CommentListResponseDto getCommentList(Long projectId, Long lastCommentId, int size) {
+        if(size < 1) throw new EntityNotFoundException(ErrorCode.BAD_REQUEST);
+
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(()
-                        -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
-        List<Comment> commentList = project.getCommentList();
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
 
-        List<EachCommentResponseDto> responseDtoList = commentList.stream()
-                .map(comment -> EachCommentResponseDto.of(comment))
-                .collect(Collectors.toList());
+        if(lastCommentId==null) {
+            List<Long> commentIds= commentRepository.findCommentIdsByDesc(project);
+            lastCommentId = commentIds.get(0) + 1;}
+        else {commentRepository.findById(lastCommentId).orElseThrow(()
+                            -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUNT));}
 
-        return CommentListResponseDto.of(responseDtoList);
+        Slice<EachCommentResponseDto> comments = fetchComment(project,lastCommentId, size);
+
+        return CommentListResponseDto.of(comments);
     }
+
+    private Slice<EachCommentResponseDto> fetchComment(Project project, long lastCommentId, int size) {
+        PageRequest pageRequest = PageRequest.of(0, size);
+        return commentRepository.fetchComments(project,lastCommentId, pageRequest);
+    }
+
 }

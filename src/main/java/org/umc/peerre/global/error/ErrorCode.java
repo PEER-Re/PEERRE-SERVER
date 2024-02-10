@@ -47,6 +47,7 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 회원입니다."),
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND,"요청한 리소스를 찾을 수 없습니다."),
     FEEDBACK_REGISTRATION_NOT_FOUND(HttpStatus.NOT_FOUND, "피드백 등록 정보를 찾을 수 없습니다."),
+    COMMENT_NOT_FOUNT(HttpStatus.NOT_FOUND,"존재하지 않는 코멘트입니다."),
 
     /**
      * 405 Method Not Allowed
