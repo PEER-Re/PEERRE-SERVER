@@ -22,6 +22,9 @@ public class FeedbackAggregation extends BaseTimeEntity {
     @Column(name="yes_feedback_count")
     private Integer yesFeedbackCount;
 
+    @Column(name="no_feedback_count")
+    private Integer noFeedbackCount;
+
     @Column(name="evaluation_status")
     private Boolean evaluationStatus;
 
