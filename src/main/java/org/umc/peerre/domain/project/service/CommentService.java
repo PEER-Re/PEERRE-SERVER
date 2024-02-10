@@ -1,8 +1,9 @@
 package org.umc.peerre.domain.project.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.umc.peerre.domain.project.dto.request.CreateCommentRequestDto;
 import org.umc.peerre.domain.project.dto.response.comment.CommentListResponseDto;
@@ -17,11 +18,11 @@ import org.umc.peerre.global.error.ErrorCode;
 import org.umc.peerre.global.error.exception.EntityNotFoundException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommentService {
     private final CommentRepository commentRepository;
     private final ProjectRepository projectRepository;
@@ -45,28 +46,25 @@ public class CommentService {
     }
 
     public CommentListResponseDto getCommentList(Long projectId, Long lastCommentId, int size) {
-        //프로젝트 조회
+        if(size < 1) throw new EntityNotFoundException(ErrorCode.BAD_REQUEST);
+
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(()
-                        -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
 
-        commentRepository.findById(lastCommentId)
-                .orElseThrow(()
-                        -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUNT));
+        if(lastCommentId==null) {
+            List<Long> commentIds= commentRepository.findCommentIdsByDesc(project);
+            lastCommentId = commentIds.get(0) + 1;}
+        else {commentRepository.findById(lastCommentId).orElseThrow(()
+                            -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUNT));}
 
-        //프로젝트의 회고 리스트
-        Page<Comment> comments = fetchComment(project,lastCommentId, size);
+        Slice<EachCommentResponseDto> comments = fetchComment(project,lastCommentId, size);
 
-        List<EachCommentResponseDto> responseDtoList = comments.stream()
-                .map(comment -> EachCommentResponseDto.of(comment))
-                .collect(Collectors.toList());
-
-        return CommentListResponseDto.of(responseDtoList);
+        return CommentListResponseDto.of(comments);
     }
 
-    private Page<Comment> fetchComment(Project project, long lastCommentId, int size) {
+    private Slice<EachCommentResponseDto> fetchComment(Project project, long lastCommentId, int size) {
         PageRequest pageRequest = PageRequest.of(0, size);
-        return commentRepository.findByProjectAndIdLessThanOrderById(project,lastCommentId, pageRequest);
+        return commentRepository.fetchComments(project,lastCommentId, pageRequest);
     }
 
 }
