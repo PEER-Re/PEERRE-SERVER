@@ -58,23 +58,12 @@ public class ProjectController {
         return SuccessResponse.ok(myFeedbackResponseDto);
     }
 
-    /**
-     * @TODO size=0인 요청 핸들링
-     * @param projectId
-     * @param lastCommentId
-     * @param size
-     * @return
-     */
     @GetMapping("/{projectId}/comments")
     public ResponseEntity<SuccessResponse<?>> getCommentList(@PathVariable Long projectId
             , @RequestParam(required = false) Long lastCommentId, @RequestParam(required = false, defaultValue = "10") int size) {
 
-        //lastCommentId가 없다는 것은 유저가 맨 처음 보게 될 상태의 데이터를 반환해야한다는 것을 의마하는데,
-        //이때 맨 처음 상태 상황은 두 가지이다.
-        // 1) 아무도 회고를 작성하지 않은 상태
-        // 2) 작성된 회고가 있는 상태
-
-        final CommentListResponseDto commentListResponseDto = commentService.getCommentList(projectId,lastCommentId,size);
+        final CommentListResponseDto commentListResponseDto =
+                commentService.getCommentList(projectId,lastCommentId,size);
         return SuccessResponse.ok(commentListResponseDto);
     }
 }
