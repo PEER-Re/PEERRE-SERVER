@@ -45,14 +45,23 @@ public class FeedbackService {
     public String enrollFeedback(Long userId, Long teamMemberId, Long projectId, FeedbackRequest.Feedback request) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당하는 유저가 없습니다."));
-        userRepository.findById(teamMemberId).orElseThrow(() -> new EntityNotFoundException("해당하는 팀원이 없습니다."));
+        User teamMember = userRepository.findById(teamMemberId).orElseThrow(() -> new EntityNotFoundException("해당하는 팀원이 없습니다."));
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new EntityNotFoundException("해당하는 프로젝트가 없습니다."));
 
-        if(project.getStatus()==Status.종료) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"진행중인 프로젝트가 아닙니다.");
+        if (project.getStatus() == Status.종료) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "진행중인 프로젝트가 아닙니다.");
         }
 
-        if(!feedbackRegistrationRepository.existsByRecipientIdAndUserAndProject(teamMemberId, user, project)) {
+        // 팀 멤버의 피드백 집계 테이블
+        FeedbackAggregation teamMemberFeedbackAggregation = feedbackAggregationRepository.findByUserAndProject(teamMember, project)
+                .orElseGet(() -> FeedbackAggregation.builder()
+                        .yesFeedbackCount(0)
+                        .noFeedbackCount(0)
+                        .user(teamMember)
+                        .project(project)
+                        .build());
+
+        if (!feedbackRegistrationRepository.existsByRecipientIdAndUserAndProject(teamMemberId, user, project)) {
 
 
             FeedbackRegistration feedbackRegistration = FeedbackRegistration.builder()
@@ -137,11 +146,73 @@ public class FeedbackService {
                 feedbackAggregation.setEvaluationStatus(true);
             }
             feedbackAggregationRepository.save(feedbackAggregation);
-        } else {
+
+            // 피드백 등록 시에 팀원의 yes피드백 개수, no 피드백 개수 저장
+            assert request != null;
+            long teamMemberYesFeedbackCount= Stream.of(
+                            request.getCommunication(),
+                            request.getPunctual(),
+                            request.getCompetent(),
+                            request.getArticulate(),
+                            request.getThorough(),
+                            request.getEngaging())
+                    .filter(Boolean.TRUE::equals)
+                    .count();
+
+            long teamMemberNoFeedbackCount= Stream.of(
+                            request.getCommunication(),
+                            request.getPunctual(),
+                            request.getCompetent(),
+                            request.getArticulate(),
+                            request.getThorough(),
+                            request.getEngaging())
+                    .filter(Boolean.FALSE::equals)
+                    .count();
+
+            Integer yesFeedbackNum = (int)teamMemberYesFeedbackCount;
+            Integer noFeedbackNum = (int)teamMemberNoFeedbackCount;
+
+            teamMemberFeedbackAggregation.setYesFeedbackCount(yesFeedbackNum);
+            teamMemberFeedbackAggregation.setNoFeedbackCount(noFeedbackNum);
+            feedbackAggregationRepository.save(teamMemberFeedbackAggregation);
+
+        }
+        // 피드백 수정
+        else {
             FeedbackRegistration feedbackRegistration = feedbackRegistrationRepository.findByRecipientIdAndUserAndProject(teamMemberId, user, project)
-                    .orElseThrow(()->new EntityNotFoundException("해당하는 피드백 등록이 없습니다."));
+                    .orElseThrow(() -> new EntityNotFoundException("해당하는 피드백 등록이 없습니다."));
 
             List<Feedback> feedbackList = feedbackRegistration.getFeedbackList();
+
+            // true 개수 찾기
+            long previousYesFeedbackNum = feedbackList.stream()
+                    .filter(feedback -> Boolean.TRUE.equals(Optional.ofNullable(feedback.getFeedbackType()).orElse(false)))
+                    .count();
+
+            // false 개수 찾기
+            long previousNoFeedbackCount = feedbackList.stream()
+                    .filter(feedback -> Boolean.FALSE.equals(Optional.ofNullable(feedback.getFeedbackType()).orElse(true)))
+                    .count();
+            // request의 true, false 개수 count
+            long teamMemberYesFeedbackCount= Stream.of(
+                            request.getCommunication(),
+                            request.getPunctual(),
+                            request.getCompetent(),
+                            request.getArticulate(),
+                            request.getThorough(),
+                            request.getEngaging())
+                    .filter(Boolean.TRUE::equals)
+                    .count();
+
+            long teamMemberNoFeedbackCount= Stream.of(
+                            request.getCommunication(),
+                            request.getPunctual(),
+                            request.getCompetent(),
+                            request.getArticulate(),
+                            request.getThorough(),
+                            request.getEngaging())
+                    .filter(Boolean.FALSE::equals)
+                    .count();
 
             feedbackList.forEach(feedback -> {
                 if ((feedback.getFeedbackContent().equals("연락이 잘 돼요") || feedback.getFeedbackContent().equals("연락이 안 돼요")) && request.getCommunication() == null) {
@@ -204,8 +275,16 @@ public class FeedbackService {
                     feedback.setFeedbackType(false);
                 }
             });
-            feedbackRepository.saveAll(feedbackList);
-            feedbackRegistrationRepository.save(feedbackRegistration);
+
+            // 피드백 등록 시에 팀원의 yes피드백 개수, no 피드백 개수 저장
+            Integer minusYesFeedbackNum = (int) previousYesFeedbackNum;
+            Integer minusNoFeedbackNum = (int) previousNoFeedbackCount;
+            Integer yesFeedbackNum = (int)teamMemberYesFeedbackCount;
+            Integer noFeedbackNum = (int)teamMemberNoFeedbackCount;
+
+            teamMemberFeedbackAggregation.setYesFeedbackCount(teamMemberFeedbackAggregation.getYesFeedbackCount()-minusYesFeedbackNum+yesFeedbackNum);
+            teamMemberFeedbackAggregation.setNoFeedbackCount(teamMemberFeedbackAggregation.getNoFeedbackCount()-minusNoFeedbackNum+noFeedbackNum);
+            feedbackAggregationRepository.save(teamMemberFeedbackAggregation);
         }
         return "피드백 등록(수정) 성공";
     }
