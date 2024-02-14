@@ -32,7 +32,7 @@ public class Teamspace extends BaseTimeEntity {
     private String profile;
 
     @Column
-    private String invitation_code;
+    private String invitationCode;
 
     @Column
     private Long leader_id;

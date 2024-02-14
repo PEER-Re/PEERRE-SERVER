@@ -19,6 +19,7 @@ public class UserTeamspace extends BaseTimeEntity {
     @Id
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @ManyToOne(fetch = FetchType.LAZY)
