@@ -1,8 +1,10 @@
 package org.umc.peerre.domain.teamspace.service;
 
+import ch.qos.logback.core.testUtil.RandomUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.umc.peerre.domain.project.dto.response.comment.CommentListResponseDto;
@@ -19,7 +21,9 @@ import org.umc.peerre.domain.teamspace.repository.UserTeamspaceRepository;
 import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.domain.user.repository.UserRepository;
 import org.umc.peerre.global.error.ErrorCode;
+import org.umc.peerre.global.error.exception.ConflictException;
 import org.umc.peerre.global.error.exception.ForbiddenException;
+import org.umc.peerre.global.error.exception.InvalidValueException;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +37,8 @@ public class TeamspaceService {
     private final TeamspaceRepository teamspaceRepository;
     private final UserRepository userRepository;
     private final UserTeamspaceRepository userTeamspaceRepository;
+    private final int randomStrLen = 4; // 초대 코드 길이
+
 
     public CreateTeamspaceResponseDto createTeamspace(Long userId, CreateTeamspaceRequestDto createTeamspaceRequestDto) {
 
@@ -42,12 +48,15 @@ public class TeamspaceService {
         String name = createTeamspaceRequestDto.name();
         String profile = createTeamspaceRequestDto.profile();
 
-        String tmpInvitationCode = "tmpInviationCode";
+        String invitationCode = CreateInvitationCode(randomStrLen);
+
+        teamspaceRepository.findByInvitationCode(invitationCode)
+                .ifPresent( a -> { throw new ConflictException(ErrorCode.CODE_CONFLICT); });
 
         Teamspace teamspace = Teamspace.builder()
                 .name(name)
                 .profile(profile)
-                .invitation_code(tmpInvitationCode)
+                .invitationCode(invitationCode)
                 .size(1)
                 .leader_id(userId)
                 .build();
@@ -62,6 +71,11 @@ public class TeamspaceService {
         userTeamspaceRepository.save(userTeamspace);
 
         return CreateTeamspaceResponseDto.of(teamspace);
+    }
+
+    public String CreateInvitationCode(int randomStrLen){
+        String invitationCode = RandomStringUtils.randomAlphanumeric(randomStrLen);
+        return invitationCode;
     }
 
     public TeamspacesResponseDto getTeamspaces(Long userId) {
