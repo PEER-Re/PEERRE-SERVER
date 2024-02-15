@@ -59,7 +59,6 @@ public class SecurityConfig {
          */
         http
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers( "api/user/test,", "/test").permitAll()
                         .anyRequest().authenticated());
 
         /**
