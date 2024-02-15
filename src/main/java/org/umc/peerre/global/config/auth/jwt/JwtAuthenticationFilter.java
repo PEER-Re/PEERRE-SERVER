@@ -15,12 +15,8 @@ import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.domain.user.repository.UserRepository;
 import org.umc.peerre.global.config.auth.principal.PrincipalDetails;
 import org.umc.peerre.global.error.ErrorCode;
-import org.umc.peerre.global.error.exception.TemporaryException;
 import org.umc.peerre.global.error.exception.UnauthorizedException;
-
 import java.io.IOException;
-
-import static org.umc.peerre.global.error.ErrorCode.BAD_REQUEST;
 import static org.umc.peerre.global.error.ErrorCode.MEMBER_NOT_FOUND;
 
 @RequiredArgsConstructor
@@ -45,24 +41,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String getAccessTokenFromHttpServletRequest(HttpServletRequest request) {
 
-        // !!! 프론트 연결 시 삭제 !!! -------------- //
-        if (request.getRequestURI().equals("/test")) {
-            throw new TemporaryException(ErrorCode.TEMPORARY_ERROR);
-        }
-        // -------------------------------- 삭제 끝 //
-
-        String accessToken = request.getHeader(accessHeader); //둘다 null
+        String accessToken = request.getHeader(accessHeader);
 
         //AUTHORIZATION 헤더가 없을 경우
         if (accessToken == null) {
             throw new UnauthorizedException(ErrorCode.NONE_AUTHORIZATION_HEADER);
         }
         //Bear로 시작하지 않는 경우
-        if (!accessToken.startsWith(PREFIX)) { //둘다 그럴지도
+        if (!accessToken.startsWith(PREFIX)) {
             throw new UnauthorizedException(ErrorCode.INVALID_ACCESS_TOKEN);
-        }else {
-            return accessToken.replace(PREFIX, "");
         }
+        return accessToken.replace(PREFIX, "");
     }
 
     private void setAuthentication(String socialId) {
