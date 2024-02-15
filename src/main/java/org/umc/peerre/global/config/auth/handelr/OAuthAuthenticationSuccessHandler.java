@@ -32,6 +32,6 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         String socialId = principal.getSocialId();
         String accessToken = jwtProvider.createAccessToken(socialId);
         response.addHeader(Authorization, accessToken);
-        getRedirectStrategy().sendRedirect(request, response, "http://localhost:5173/team-space");
+        getRedirectStrategy().sendRedirect(request, response, "https://peerre-front.vercel.app/team-space");
     }
 }
