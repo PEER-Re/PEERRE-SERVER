@@ -25,5 +25,10 @@ public class UserController {
     public ResponseEntity<SuccessResponse<?>> test(@UserId Long userId) {
         return SuccessResponse.ok("유저 아이디 = "+userId);
     }
+
+    @GetMapping("/healthcheck")
+    public String PeerreServer() {
+        return "피어리 서버입니다.";
+    }
 }
 
