@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.umc.peerre.domain.teamspace.dto.request.CreateTeamspaceRequestDto;
 import org.umc.peerre.domain.teamspace.dto.response.CreateTeamspaceResponseDto;
 import org.umc.peerre.domain.teamspace.dto.response.ProjectsResponseDto;
+import org.umc.peerre.domain.teamspace.dto.response.TeamspaceResponseDto;
 import org.umc.peerre.domain.teamspace.dto.response.TeamspacesResponseDto;
 import org.umc.peerre.domain.teamspace.service.TeamspaceService;
 import org.umc.peerre.global.common.SuccessResponse;
@@ -24,7 +25,7 @@ public class TeamspaceController {
         return SuccessResponse.created(newTeamspace);
     }
 
-    @GetMapping("/{userId}/teamspaces")
+    @GetMapping("/teamspaces")
     public ResponseEntity<SuccessResponse<?>> getTeamspaces(@UserId Long userId) {
         final TeamspacesResponseDto teamSpacesResponseDto = teamspaceService.getTeamspaces(userId);
         return SuccessResponse.ok(teamSpacesResponseDto);
@@ -39,6 +40,13 @@ public class TeamspaceController {
     @DeleteMapping("/{teamspaceId}")
     public ResponseEntity<SuccessResponse<?>> deleteTeamspace(@UserId Long userId, @PathVariable Long teamspaceId) {
         return SuccessResponse.ok(teamspaceService.deleteTeamspace(userId, teamspaceId));
+    }
+
+    @PostMapping("/invite")
+    public ResponseEntity<SuccessResponse<?>> inviteMember(@UserId Long userId, @RequestParam("invitationCode") String invitationCode) {
+        System.out.println(invitationCode);
+        final TeamspaceResponseDto invitedTeamspace = teamspaceService.inviteMember(userId, invitationCode);
+        return SuccessResponse.ok(invitedTeamspace);
     }
 
 }
