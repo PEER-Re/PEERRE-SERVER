@@ -1,5 +1,6 @@
 package org.umc.peerre.domain.project.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class ProjectController {
     }
 
     @PostMapping("/comment")
-    public ResponseEntity<SuccessResponse<?>> createComments(@UserId Long userId, @RequestBody CreateCommentRequestDto createCommentRequestDto) {
+    public ResponseEntity<SuccessResponse<?>> createComments(@UserId Long userId, @RequestBody @Valid CreateCommentRequestDto createCommentRequestDto) {
         CreateCommentResponseDto newComment = commentService.createComment(userId,createCommentRequestDto);
         return SuccessResponse.created(newComment);
     }
