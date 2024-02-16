@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.umc.peerre.domain.teamspace.dto.request.CreateTeamspaceRequestDto;
-import org.umc.peerre.domain.teamspace.dto.response.CreateTeamspaceResponseDto;
-import org.umc.peerre.domain.teamspace.dto.response.ProjectsResponseDto;
-import org.umc.peerre.domain.teamspace.dto.response.TeamspaceResponseDto;
-import org.umc.peerre.domain.teamspace.dto.response.TeamspacesResponseDto;
+import org.umc.peerre.domain.teamspace.dto.request.TeamspaceInvitationRequestDto;
+import org.umc.peerre.domain.teamspace.dto.response.*;
 import org.umc.peerre.domain.teamspace.service.TeamspaceService;
 import org.umc.peerre.global.common.SuccessResponse;
 import org.umc.peerre.global.config.auth.UserId;
@@ -43,10 +41,8 @@ public class TeamspaceController {
     }
 
     @PostMapping("/invite")
-    public ResponseEntity<SuccessResponse<?>> inviteMember(@UserId Long userId, @RequestParam("invitationCode") String invitationCode) {
-        System.out.println(invitationCode);
-        final TeamspaceResponseDto invitedTeamspace = teamspaceService.inviteMember(userId, invitationCode);
-        return SuccessResponse.ok(invitedTeamspace);
+    public ResponseEntity<SuccessResponse<?>> inviteMember(@UserId Long userId, @RequestBody TeamspaceInvitationRequestDto teamspaceInvitationRequestDto) {
+        return SuccessResponse.ok(teamspaceService.inviteMember(userId, teamspaceInvitationRequestDto));
     }
 
 }

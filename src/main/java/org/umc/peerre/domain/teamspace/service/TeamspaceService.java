@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.umc.peerre.domain.project.entity.Project;
 import org.umc.peerre.domain.teamspace.constant.Role;
 import org.umc.peerre.domain.teamspace.dto.request.CreateTeamspaceRequestDto;
+import org.umc.peerre.domain.teamspace.dto.request.TeamspaceInvitationRequestDto;
 import org.umc.peerre.domain.teamspace.dto.response.*;
 import org.umc.peerre.domain.teamspace.entity.Teamspace;
 import org.umc.peerre.domain.teamspace.entity.UserTeamspace;
@@ -19,7 +20,9 @@ import org.umc.peerre.global.error.ErrorCode;
 import org.umc.peerre.global.error.exception.ConflictException;
 import org.umc.peerre.global.error.exception.ForbiddenException;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -42,7 +45,7 @@ public class TeamspaceService {
 
         String invitationCode = CreateInvitationCode(randomStrLen);
         teamspaceRepository.findByInvitationCode(invitationCode)
-                .ifPresent( a -> { throw new ConflictException(ErrorCode.CODE_CONFLICT); });
+                .ifPresent( a -> { throw new ConflictException(ErrorCode.INVITATIONCODE_CONFLICT); });
 
         Teamspace teamspace = Teamspace.builder()
                 .name(name)
@@ -74,8 +77,7 @@ public class TeamspaceService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND.getMessage()));
 
-        List<UserTeamspace> userTeamspaceList = userTeamspaceRepository.findByUser(user)
-                .orElseThrow(()-> new EntityNotFoundException("해당 유저가 속해있는 팀 스페이스가 없습니다."));
+        List<UserTeamspace> userTeamspaceList = userTeamspaceRepository.findByUser(user);
 
         List<TeamspaceResponseDto> teamspaceResponseDtoList = userTeamspaceList.stream()
                 .map(userTeamspace -> TeamspaceResponseDto.of(userTeamspace))
@@ -121,18 +123,19 @@ public class TeamspaceService {
         return Boolean.TRUE;
     }
     @Transactional
-    public TeamspaceResponseDto inviteMember(Long userId, String invitationCode) {
+    public TeamspaceInvitationResponseDto inviteMember(Long userId, TeamspaceInvitationRequestDto teamspaceInvitationRequestDto) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND.getMessage()));
 
+        String invitationCode = teamspaceInvitationRequestDto.invitationCode();
+
         Teamspace teamspace = teamspaceRepository.findByInvitationCode(invitationCode)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.TEAM_NOT_FOUND.getMessage()));
 
-        int tmpSize = teamspace.getSize();
-        int resultSize = tmpSize+1;
-        teamspace.setSize(resultSize);
-        System.out.println(teamspace.getSize());
+        userTeamspaceRepository.findByUserIdAndTeamspaceId(userId, teamspace.getId())
+                .ifPresent( a -> { throw new ConflictException(ErrorCode.TEAM_INVITE_CONFLICT); });
+
         UserTeamspace userTeamspace = UserTeamspace.builder()
                 .user(user)
                 .role(Role.Member)
@@ -141,6 +144,11 @@ public class TeamspaceService {
 
         userTeamspaceRepository.save(userTeamspace);
 
-        return TeamspaceResponseDto.of(userTeamspace);
+        Long tmpSize = userTeamspaceRepository.countByTeamspaceId(teamspace.getId());
+        int size = tmpSize.intValue();
+        teamspace.setSize(size);
+
+
+        return TeamspaceInvitationResponseDto.of(userId, userTeamspace, teamspace);
     }
 }

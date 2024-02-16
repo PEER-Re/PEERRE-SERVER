@@ -16,9 +16,11 @@ public interface UserTeamspaceRepository extends JpaRepository<UserTeamspace, Lo
 
     Optional<List<UserTeamspace>> findByTeamspace(Teamspace teamspace);
 
-    Optional<List<UserTeamspace>> findByUser(User user);
+    List<UserTeamspace> findByUser(User user);
 
     List<UserTeamspace> findByTeamspaceId(Long teamspaceId);
 
     Optional<UserTeamspace> findByUserIdAndTeamspaceId(Long userId, Long teamspaceId);
+
+    Long countByTeamspaceId(Long teamspaceId);
 }
