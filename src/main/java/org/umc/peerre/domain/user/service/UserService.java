@@ -4,10 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.umc.peerre.domain.user.dto.response.UserInfoResponseDto;
 import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.domain.user.repository.UserRepository;
 import org.umc.peerre.global.config.auth.jwt.JwtProvider;
 import org.umc.peerre.global.config.auth.principal.userInfo.OAuth2UserInfo;
+import org.umc.peerre.global.error.ErrorCode;
+import org.umc.peerre.global.error.exception.EntityNotFoundException;
+import org.umc.peerre.global.error.exception.InternalServerException;
 
 @RequiredArgsConstructor
 @Service
@@ -48,4 +52,10 @@ public class UserService {
         return userRepository.save(createdUser);
     }
 
+    @Transactional(readOnly = true)
+    public UserInfoResponseDto getUserInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        return UserInfoResponseDto.of(user);
+    }
 }
