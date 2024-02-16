@@ -1,12 +1,8 @@
 package org.umc.peerre.domain.teamspace.dto.response;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Builder;
 import org.umc.peerre.domain.project.constant.Status;
 import org.umc.peerre.domain.project.entity.Project;
-import org.umc.peerre.domain.teamspace.entity.UserTeamspace;
 
 import java.time.LocalDate;
 

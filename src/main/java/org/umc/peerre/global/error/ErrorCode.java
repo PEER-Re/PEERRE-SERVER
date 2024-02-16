@@ -58,7 +58,8 @@ public enum ErrorCode {
      * 409 Conflict
      */
     CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 리소스입니다."),
-    CODE_CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 초대코드입니다."),
+    INVITATIONCODE_CONFLICT(HttpStatus.CONFLICT, "이미 존재하는 초대코드입니다."),
+    TEAM_INVITE_CONFLICT(HttpStatus.CONFLICT, "이미 초대된 팀입니다."),
 
     /**
      * 500 Internal Server Error

@@ -1,8 +1,6 @@
 package org.umc.peerre.domain.teamspace.dto.response;
 
 import lombok.Builder;
-import org.umc.peerre.domain.teamspace.entity.UserTeamspace;
-
 import java.util.List;
 
 @Builder
