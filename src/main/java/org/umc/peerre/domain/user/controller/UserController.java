@@ -3,6 +3,7 @@ package org.umc.peerre.domain.user.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.umc.peerre.domain.user.dto.response.UserInfoResponseDto;
 import org.umc.peerre.domain.user.entity.User;
 import org.umc.peerre.domain.user.service.UserService;
 import org.umc.peerre.global.common.SuccessResponse;
@@ -15,6 +16,12 @@ import org.umc.peerre.global.config.auth.UserId;
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping
+    public ResponseEntity<SuccessResponse<?>> getUserInfo(@UserId Long userId) {
+        UserInfoResponseDto userInfoResponseDto = userService.getUserInfo(userId);
+        return SuccessResponse.ok(userInfoResponseDto);
+    }
 
     /**
      * 발급된 토큰 검증 테스트 api
@@ -30,5 +37,7 @@ public class UserController {
     public String PeerreServer() {
         return "피어리 서버입니다.";
     }
+
+
 }
 
