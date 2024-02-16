@@ -10,18 +10,12 @@ import java.util.Collections;
 import java.util.List;
 
 @Builder
-@Slf4j
 public record CommentListResponseDto(
-        boolean isEmpty,
-        int size,
         List<EachCommentResponseDto> commentList
-) { public static CommentListResponseDto of(Slice<EachCommentResponseDto> comments) {
-
-    List<EachCommentResponseDto> responseDtos = new ArrayList<>(comments.getContent());
-    Collections.reverse(responseDtos);
+) { public static CommentListResponseDto of(List<EachCommentResponseDto> commentResponseDtos) {
 
     return CommentListResponseDto.builder()
-            .isEmpty(comments.isEmpty())
-            .size(comments.getNumberOfElements())
-            .commentList(responseDtos).build();
-}}
+            .commentList(commentResponseDtos).build();
+
+  }
+}

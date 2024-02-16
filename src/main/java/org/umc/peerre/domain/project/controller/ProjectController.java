@@ -59,11 +59,8 @@ public class ProjectController {
     }
 
     @GetMapping("/{projectId}/comments")
-    public ResponseEntity<SuccessResponse<?>> getCommentList(@PathVariable Long projectId
-            , @RequestParam(required = false) Long lastCommentId, @RequestParam(required = false, defaultValue = "10") int size) {
-
-        final CommentListResponseDto commentListResponseDto =
-                commentService.getCommentList(projectId,lastCommentId,size);
+    public ResponseEntity<SuccessResponse<?>> getCommentList(@PathVariable Long projectId) {
+        final CommentListResponseDto commentListResponseDto = commentService.getCommentList(projectId);
         return SuccessResponse.ok(commentListResponseDto);
     }
 }
