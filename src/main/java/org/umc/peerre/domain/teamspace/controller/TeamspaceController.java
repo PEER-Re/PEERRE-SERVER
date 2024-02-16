@@ -23,7 +23,7 @@ public class TeamspaceController {
         return SuccessResponse.created(newTeamspace);
     }
 
-    @GetMapping("/{userId}/teamspaces")
+    @GetMapping("/teamspaces")
     public ResponseEntity<SuccessResponse<?>> getTeamspaces(@UserId Long userId) {
         final TeamspacesResponseDto teamSpacesResponseDto = teamspaceService.getTeamspaces(userId);
         return SuccessResponse.ok(teamSpacesResponseDto);
