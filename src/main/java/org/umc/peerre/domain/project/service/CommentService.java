@@ -18,6 +18,7 @@ import org.umc.peerre.global.error.ErrorCode;
 import org.umc.peerre.global.error.exception.EntityNotFoundException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -45,26 +46,18 @@ public class CommentService {
         return CreateCommentResponseDto.of(save);
     }
 
-    public CommentListResponseDto getCommentList(Long projectId, Long lastCommentId, int size) {
-        if(size < 1) throw new EntityNotFoundException(ErrorCode.BAD_REQUEST);
-
+    public CommentListResponseDto getCommentList(Long projectId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
+                .orElseThrow(()
+                        -> new EntityNotFoundException(ErrorCode.PROJECT_NOT_FOUND));
+        List<Comment> commentList = project.getCommentList();
 
-        if(lastCommentId==null) {
-            List<Long> commentIds= commentRepository.findCommentIdsByDesc(project);
-            lastCommentId = commentIds.get(0) + 1;}
-        else {commentRepository.findById(lastCommentId).orElseThrow(()
-                            -> new EntityNotFoundException(ErrorCode.COMMENT_NOT_FOUNT));}
+        List<EachCommentResponseDto> responseDtoList = commentList.stream()
+                .map(comment -> EachCommentResponseDto.of(comment))
+                .collect(Collectors.toList());
 
-        Slice<EachCommentResponseDto> comments = fetchComment(project,lastCommentId, size);
-
-        return CommentListResponseDto.of(comments);
+        return CommentListResponseDto.of(responseDtoList);
     }
 
-    private Slice<EachCommentResponseDto> fetchComment(Project project, long lastCommentId, int size) {
-        PageRequest pageRequest = PageRequest.of(0, size);
-        return commentRepository.fetchComments(project,lastCommentId, pageRequest);
-    }
 
 }
