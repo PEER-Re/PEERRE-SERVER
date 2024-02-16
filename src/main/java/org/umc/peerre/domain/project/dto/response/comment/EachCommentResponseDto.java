@@ -6,11 +6,18 @@ import org.umc.peerre.domain.user.entity.User;
 
 @Builder
 public record EachCommentResponseDto(
-        long id,
+        long commentId,
         String nickname,
         String profileImgUrl,
         String content
-)
-{
+) { public static EachCommentResponseDto of(Comment comment) {
 
+    User user = comment.getUser();
+
+    return EachCommentResponseDto.builder()
+            .commentId(comment.getId())
+            .nickname(user.getNickname())
+            .profileImgUrl(user.getProfileImgUrl())
+            .content(comment.getContent()).build();
+}
 }
