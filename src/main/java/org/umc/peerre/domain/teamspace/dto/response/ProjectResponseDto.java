@@ -8,6 +8,9 @@ import java.time.LocalDate;
 
 @Builder
 public record ProjectResponseDto(
+
+        Long id,
+
         String title,
 
         Status status,
@@ -18,6 +21,8 @@ public record ProjectResponseDto(
 ) {
     public static ProjectResponseDto of(Project project) {
 
+        Long id = project.getId();
+
         String title = project.getTitle();
 
         Status status = project.getStatus();
@@ -27,6 +32,7 @@ public record ProjectResponseDto(
         LocalDate endDay = project.getEndDay();
 
         return ProjectResponseDto.builder()
+                .id(id)
                 .title(title)
                 .status(status)
                 .startDay(startDay)
