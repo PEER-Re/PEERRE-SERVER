@@ -100,6 +100,7 @@ public class ProjectService {
 
         return new TeamInfoResponseDto(
                 project.getTeamspace().getName(),
+                project.getTitle(),
                 project.getStartDay(),
                 project.getEndDay(),
                 project.getSize(),

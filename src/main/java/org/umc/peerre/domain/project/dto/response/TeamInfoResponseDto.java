@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 public record TeamInfoResponseDto(
         String teamName,
+
+        String projectName,
         LocalDate startDay,
         LocalDate endDay,
         int size,
