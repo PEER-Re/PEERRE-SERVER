@@ -11,17 +11,17 @@ public class FeedbackRequest {
     @Setter
     @NoArgsConstructor
     public static class Feedback {
-        @Schema(description = "연락이 잘 돼요: true, 안 돼요: false", nullable = true, example = "true")
+        @Schema(description = "프로젝트 관련 소통이 원활함: true, No: false", nullable = true, example = "true")
         private Boolean communication;
-        @Schema(description = "시간약속을 잘 지켜요: true, 안지켜요 : false", nullable = true, example = "true")
+        @Schema(description = "정해진 기한 내 업무를 달성함: true, No : false", nullable = true, example = "true")
         private Boolean punctual;
-        @Schema(description = "능력이 뛰어나요: true, 뒤떨어져요: false", nullable = true, example = "true")
+        @Schema(description = "업무 달성 결과의 질적 수준이 높음: true, No: false", nullable = true, example = "true")
         private Boolean competent;
-        @Schema(description = "말을 조리있게 잘해요: true, 못해요: false", nullable = true, example = "true")
+        @Schema(description = "동료의 의견을 적극 수용함: true, No: false", nullable = true, example = "true")
         private Boolean articulate;
-        @Schema(description = "빈틈이 없어요: true, 있어요: false", nullable = true, example = "true")
+        @Schema(description = "업무를 책임감 있게 수행함: true, No: false", nullable = true, example = "true")
         private Boolean thorough;
-        @Schema(description = "재미있어요: true, 없어요: false", nullable = true, example = "true")
+        @Schema(description = "프로젝트에 적극적인 자세로 참여함: true, No: false", nullable = true, example = "true")
         private Boolean engaging;
     }
 }
