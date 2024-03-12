@@ -1,4 +1,4 @@
-# 건강한 협력을 위한 선택형 동료 평가 서비스, PEER:RE 
+# 건강한 협력을 위한 선택형 동료 평가 서비스, PEER:Re
 
 <img width="300" alt="스크린샷 2024-03-13 오전 12 15 00" src="https://github.com/PEER-Re/PEERRE-SERVER/assets/102026726/237a0414-e6b3-4207-8a92-a5560f50e0f1">
 
